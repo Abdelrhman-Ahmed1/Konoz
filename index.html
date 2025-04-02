@@ -8,10 +8,194 @@
         <link rel="icon" type="image/png" href="icon.png">
         <link rel="stylesheet" href="style.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
         
     </head>
-    <body onload=loadDatabase()>
+    <body>
         <script>
+            let count = 0,IDs = [],names = [],nums = [],parent = [];
+            /*try{
+                //count = localStorage.getItem("count");
+                //document.getElementById("count").value = count;
+            }catch{
+                count = 0;
+                document.getElementById("count").value = count;
+                
+            }
+            /* try{ 
+                IDs = toString(localStorage.getItem("IDs"));
+            }catch{
+                IDs = "";
+            }
+            try{
+                names = toString(localStorage.getItem("names"));
+            }catch{
+                names = "";
+            }
+            try{
+                nums = toString(localStorage.getItem("nums"));
+            }catch{
+                nums = "";
+            }
+            try{
+                parent = toString(localStorage.getItem("parent"));
+            }catch{
+                parent = "";
+            }
+        */
+            let db = "";
+            let today = new Date();
+            let daynum = today.getDay();
+
+            let firstDate = "";
+            let secondDate = "";
+            let thirdDate = "";
+
+            if ( daynum == 6 ){ //'السبت'
+                today.setDate(today.getDate() - 2);
+                let year = today.getFullYear();
+                let month = today.getMonth() +1;
+                let day = today.getDate();
+                firstDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 3);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                secondDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 4);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                thirdDate = `_${day}_${month}_${year}`;
+            }
+
+            if ( daynum == 0 ){ //الاحد
+                today.setDate(today.getDate() - 3);
+                let year = today.getFullYear();
+                let month = today.getMonth() +1;
+                let day = today.getDate();
+                firstDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 4);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                secondDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 5);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                thirdDate = `_${day}_${month}_${year}`;
+            }
+
+            if ( daynum == 1 ){ //"الاتنين"
+                today.setDate(today.getDate() - 4);
+                let year = today.getFullYear();
+                let month = today.getMonth() +1;
+                let day = today.getDate();
+                firstDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 5);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                secondDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 6);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                thirdDate = `_${day}_${month}_${year}`;
+            }
+
+            if ( daynum == 2 ){ //"التلات"
+                today.setDate(today.getDate() - 1);
+                let year = today.getFullYear();
+                let month = today.getMonth() +1;
+                let day = today.getDate();
+                firstDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 2);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                secondDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 3);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                thirdDate = `_${day}_${month}_${year}`;
+            }
+            if ( daynum == 3 ){ //"الاربع"
+                today.setDate(today.getDate() - 2);
+                let year = today.getFullYear();
+                let month = today.getMonth() +1;
+                let day = today.getDate();
+                firstDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 3);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                secondDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 4);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                thirdDate = `_${day}_${month}_${year}`;
+            }
+            if ( daynum == 4 ){ //"الخميس"
+                today.setDate(today.getDate() - 3);
+                let year = today.getFullYear();
+                let month = today.getMonth() +1;
+                let day = today.getDate();
+                firstDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 4);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                secondDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 5);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                thirdDate = `_${day}_${month}_${year}`;
+            }
+            if ( daynum == 5 ){ //"الحمعة"
+                today.setDate(today.getDate() - 1);
+                let year = today.getFullYear();
+                let month = today.getMonth() +1;
+                let day = today.getDate();
+                firstDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 2);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                secondDate = `_${day}_${month}_${year}`; 
+
+                today.setDate(today.getDate() - 3);
+                year = today.getFullYear();
+                month = today.getMonth() +1;
+                day = today.getDate();
+                thirdDate = `_${day}_${month}_${year}`;
+            }
+
+            today = new Date();
+            let year = today.getFullYear();
+            let month = today.getMonth() +1;
+            let day = today.getDate();
+            let currentdate = `_${day}_${month}_${year}`;
+
+
             async function loadDatabase() {
 
                 try{
@@ -19,9 +203,9 @@
                     const SQL = await initSqlJs({ locateFile:() => "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.wasm" });
                     
                 // Fetch the database file from GitHub
-                    let response = await fetch("data.db");
+                    let response = await fetch("https://raw.githubusercontent.com/Abdelrhman-Ahmed1/Konoz/main/data.db");
                     let buffer = await response.arrayBuffer();
-                    let db = new SQL.Database(new Uint8Array(buffer));
+                    db = new SQL.Database(new Uint8Array(buffer));
                     
                     // Run SQL query
                     let result = db.exec("SELECT * FROM SEC3;");
@@ -32,7 +216,177 @@
                 };
             
             };
-            
+
+            async function getData(){
+
+                var id = document.getElementById("lll").value;
+                let name,fstnum,secnum,day1,day2,day3,absence;
+
+
+                if (id == ""){
+                    alert("دخل الكود او الرقم");
+                    return 0;
+                }
+                
+                else if (id.length > 5){
+                    for ( let x = 0; x < IDs.length; x++ ){
+                        if ( id == nums[x] ){
+                            alert("الطالب متسجل حضور");
+                            return 0;
+                        }
+                    }
+                    var number = id; 
+                    try{
+                        let result = db.exec(`SELECT ID,Name,Mobile_Number,Parent_Number FROM SEC3 where Mobile_Number = ${number};`);
+                        let arr = [];
+                        result.forEach(item => {arr = JSON.stringify(item['values']).split(',');});
+                        id = arr[0].split('[').join('');
+                        name = arr[1];
+                        fstnum = arr[2];
+                        secnum = arr[3].split(']').join('');
+                        try{
+                            let result = db.exec(`SELECT ID FROM ${firstDate} where ID = ${id};`);
+                            day1 = true;
+                        }
+                        catch{
+                            day1 = false;
+                        }
+                        try{
+                            let result = db.exec(`SELECT ID FROM ${secondDate} where ID = ${id};`);
+                            day2 = true;
+                        }
+                        catch{
+                            day2 = false;
+                        }
+                        try{
+                            let result = db.exec(`SELECT ID FROM ${thirdDate} where ID = ${id};`);
+                            day3 = true;
+                        }
+                        catch{
+                            day3 = false;
+                        }
+                        if ( day1 == false && day2 == false && day3 == false){
+                            absence = "محضرش اخر حصة";
+                        };
+                    }catch{
+                        absence = "ملوش كود هنسجل رقمه معانا";
+                    }
+                }
+                else{ 
+                    for ( let x = 0; x < IDs.length; x++ ){
+                        if ( id == IDs[x] ){
+                            alert("الطالب متسجل حضور");
+                            return 0;
+                        }
+                    }
+                    try{
+                        let result = db.exec(`SELECT ID,Name,Mobile_Number,Parent_Number FROM SEC3 where ID = ${id};`);
+                        let arr = [];
+                        result.forEach(item => {arr = JSON.stringify(item['values']).split(',');});
+                        id = arr[0].split('[').join('');
+                        name = arr[1];
+                        fstnum = arr[2];
+                        secnum = arr[3].split(']').join('');
+                        try{
+                            let result = db.exec(`SELECT ID FROM ${firstDate} where ID = ${id};`);
+                            day1 = true;
+                        }
+                        catch{
+                            day1 = false;
+                        }
+                        try{
+                            let result = db.exec(`SELECT ID FROM ${secondDate} where ID = ${id};`);
+                            day2 = true;
+                        }
+                        catch{
+                            day2 = false;
+                        }
+                        try{
+                            let result = db.exec(`SELECT ID FROM ${thirdDate} where ID = ${id};`);
+                            day3 = true;
+                        }
+                        catch{
+                            day3 = false;
+                        }
+                        if ( day1 == false && day2 == false && day3 == false){
+                            absence = "محضرش اخر حصة";
+                        }
+                    }
+                    catch{
+                        alert("الكود مش متسجل");
+                        return 0;
+                    }    
+                }
+                
+                let confirm2 = confirm(id + "\n" + name + "\n" + fstnum + "\n" + secnum + "\n" + absence);
+                if ( confirm2 ){
+
+                    IDs.push(id);
+                    names.push(name);
+                    nums.push(fstnum);
+                    parent.push(secnum);
+                    
+                    
+                    /*localStorage.setItem('IDs',IDs);
+                    localStorage.setItem('names',names);
+                    localStorage.setItem('nums',nums);
+                    localStorage.setItem('parent',parent);*/
+                    count = parseInt(count) + 1;
+                    
+                   /* localStorage.setItem('count',count); */
+                    document.getElementById("count").value = count;
+                    
+                    return 0;
+                }
+                else{
+                    return 0;
+                }
+
+
+
+
+
+
+            }
+            window.onload = () => {
+                document.getElementById("count").value = 0;
+                loadDatabase();
+            };
+            async function countt(){
+                let result = "";
+                for (let i = 0; i < IDs.length; i++) {
+                    result += `   ${IDs[i]}: ${names[i]}   `;
+                    
+                }
+                
+                document.getElementById("n").textContent = result;
+                return 0;
+            }
+            async function whats(){
+                
+                let message = IDs.join('\n');
+                const url = `https://api.whatsapp.com/send?phone=${+201555115339}&text=${encodeURIComponent(message)}`;
+                alert(message);
+                window.open(url, "_blank");
+            }
+            async function excell(){
+                                // Sample data
+                const data = [];
+                for ( let x = 0; x < IDs.length; x++){
+                    data.push([`${IDs[x]}`,`${names[x]}`,`${nums[x]}`,`${parent[x]}`]);
+                }
+
+                // Convert data to a worksheet
+                const ws = XLSX.utils.aoa_to_sheet(data);
+
+                // Create a new workbook
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, `${currentdate}`);
+
+                // Generate and download the Excel file
+                XLSX.writeFile(wb, `سجل_حضور_بتاريخ${currentdate}.xlsx`);
+
+            }
         </script>
         <header>
             <h1>Konoz</h1>
@@ -42,13 +396,17 @@
             <p>كنوز ويب سايت</p>
             <div id="box">
                 <input type="number" placeholder="الكود او رقم الموبايل" id="lll">
-                <input type="button" value="سجل حضور" id="button">
+                <input type="button" value="سجل حضور" id="button" onclick=getData()>
                 <br>
                 <br>
-                <input type="button" value="0" id="count" onclick=count>
+                <input type="button" id="count" onclick=countt()>
+                
+                
             </div>
-            <input type="button" value="اعمل اكسيل" id="button2">
-            <input type="button" value="ابعت لعبدالرحمن" id="button3">
+            
+            <h6 id="n"></h6>
+            <input type="button" value="اعمل اكسيل" id="button2" onclick=excell()>
+            <input type="button" value="ابعت لعبدالرحمن" id="button3" onclick=whats()>
             <br>
             <br>
             <br>
