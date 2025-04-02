@@ -125,3 +125,17 @@ header{
     text-align: center;
     
 }
+#n{
+    width: 55%;
+    background-color: brown;
+    font-size: x-large;
+    text-align: center;
+    border-radius: 10px;
+    color: aliceblue;
+    font-family: Arial;
+    padding: 10px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
