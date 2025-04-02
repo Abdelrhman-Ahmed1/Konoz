@@ -7,9 +7,33 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/png" href="icon.png">
         <link rel="stylesheet" href="style.css">
-        <script src="script.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+        
     </head>
-    <body>
+    <body onload=loadDatabase()>
+        <script>
+            async function loadDatabase() {
+
+                try{
+                    
+                    const SQL = await initSqlJs({ locateFile:() => "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.wasm" });
+                    
+                // Fetch the database file from GitHub
+                    let response = await fetch("https://raw.githubusercontent.com/Abdelrhman-Ahmed1/Konoz/main/data.db");
+                    let buffer = await response.arrayBuffer();
+                    let db = new SQL.Database(new Uint8Array(buffer));
+                    
+                    // Run SQL query
+                    let result = db.exec("SELECT * FROM SEC3;");
+                    //document.getElementById("output").textContent = JSON.stringify(result, null, 2);
+                    alert("كل حاجه زي الفل");
+                }catch{
+                    alert("!!!كلم عبدالرحمن في مشكلة");
+                };
+            
+            };
+            
+        </script>
         <header>
             <h1>Konoz</h1>
         </header>
@@ -21,7 +45,7 @@
                 <input type="button" value="سجل حضور" id="button">
                 <br>
                 <br>
-                <input type="button" value="0" id="count" onclick=count()>
+                <input type="button" value="0" id="count" onclick=count>
             </div>
             <input type="button" value="اعمل اكسيل" id="button2">
             <input type="button" value="ابعت لعبدالرحمن" id="button3">
