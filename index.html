@@ -1,532 +1,2762 @@
 <!DOCTYPE html>
-    <head>
-        <title>
-            Konoz Website
-        </title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="icon.png">
-        <link rel="stylesheet" href="style.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<html lang="ar" dir="rtl">
+<head>
+    <title>Konoz - نظام إدارة الحضور</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <img src="icon.png" alt="Konoz Logo" class="logo">
+                <h1>نظام إدارة الحضور - كنوز</h1>
+            </div>
+        </header>
 
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Section Selection -->
+            <div class="section-selector">
+                <h2>اختر القسم</h2>
+                <div class="section-buttons">
+                    <button class="section-btn active" data-section="SEC3" onclick="selectSection('SEC3')">
+                        <i class="fas fa-users"></i>
+                        علمي رياضة
+                    </button>
+                    <button class="section-btn" data-section="SEC33" onclick="selectSection('SEC33')">
+                        <i class="fas fa-user-graduate"></i>
+                        ادبي الفا
+                    </button>
+                    <button class="section-btn" data-section="SEC33_2" onclick="selectSection('SEC33_2')">
+                        <i class="fas fa-user-graduate"></i>
+                        ادبي الراعي
+                    </button>
+                </div>
+            </div>
+
+            <!-- Attendance Form -->
+            <div class="attendance-card">
+                <div class="card-header">
+                    <h3>تسجيل الحضور</h3>
+                    <div class="attendance-counter">
+                        <span class="counter-label">عدد الحضور:</span>
+                        <span class="counter-value" id="count">0</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentInput">الكود أو رقم الموبايل</label>
+                    <input type="text" id="studentInput" placeholder="أدخل الكود أو رقم الموبايل" class="form-input">
+                    <button class="btn btn-primary" onclick="getData()">
+                        <i class="fas fa-check"></i>
+                        تسجيل حضور
+                    </button>
+                </div>
+
+                <div class="attendance-list" id="attendanceList">
+                    <h4>قائمة الحضور</h4>
+                    <div class="list-container" id="n"></div>
+                </div>
+            </div>
+
+            <!-- Actions Panel -->
+            <div class="actions-panel">
+                <h3>إجراءات الحضور</h3>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="getData()">
+                        <i class="fas fa-plus"></i>
+                        تسجيل حضور جديد
+                    </button>
+                    <button class="btn btn-secondary" onclick="countt()">
+                        <i class="fas fa-chart-bar"></i>
+                        عرض الإحصائيات
+                    </button>
+                    <button class="btn btn-success" onclick="excell()">
+                        <i class="fas fa-file-excel"></i>
+                        تصدير إلى Excel
+                    </button>
+                    <button class="btn btn-whatsapp" onclick="whats()">
+                        <i class="fab fa-whatsapp"></i>
+                        إرسال واتساب
+                    </button>
+                    <button class="btn btn-github" onclick="quickUploadToGitHub()">
+                        <i class="fab fa-github"></i>
+                        رفع إلى GitHub
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Management -->
         
-    </head>
-    <body>
-        <script>
-            let count = 0,IDs = [],names = [],nums = [],parent = [];
-            /*try{
-                //count = localStorage.getItem("count");
-                //document.getElementById("count").value = count;
-            }catch{
-                count = 0;
-                document.getElementById("count").value = count;
+
+            <!-- New Attendance Table Management -->
+            <div class="table-management-card">
+                <div class="card-header">
+                    <h3>إدارة جداول الحضور</h3>
+                </div>
                 
-            }
-            /* try{ 
-                IDs = toString(localStorage.getItem("IDs"));
-            }catch{
-                IDs = "";
-            }
-            try{
-                names = toString(localStorage.getItem("names"));
-            }catch{
-                names = "";
-            }
-            try{
-                nums = toString(localStorage.getItem("nums"));
-            }catch{
-                nums = "";
-            }
-            try{
-                parent = toString(localStorage.getItem("parent"));
-            }catch{
-                parent = "";
-            }
-        */
-            let db = "";
-            let today = new Date();
-            let daynum = today.getDay();
+                <div class="table-controls">
+                    
+                    
+                    
+                    
+                    <button class="btn btn-success" onclick="saveCurrentAttendanceToDatabase()">
+                        <i class="fas fa-save"></i>
+                        حفظ الحضور الحالي
+                    </button>
+                    
+                    <button class="btn btn-github" onclick="quickUploadToGitHub()">
+                        <i class="fab fa-github"></i>
+                        رفع إلى GitHub
+                    </button>
+                    
+                    <button class="btn btn-info" onclick="exportModifiedDatabase()">
+                        <i class="fas fa-download"></i>
+                        تصدير قاعدة البيانات
+                    </button>
+                </div>
 
-            let firstDate = "";
-            let secondDate = "";
-            let thirdDate = "";
+                <div class="existing-tables">
+                    <h4>إدارة البيانات</h4>
+                    
+                    <!-- Date Selector for Specific Table -->
+                    <div class="date-selector-section">
+                        <h5>عرض جدول حضور تاريخ محدد</h5>
+                        <div class="form-group">
+                            <label for="specificDate">اختر التاريخ:</label>
+                            <input type="date" id="specificDate" class="form-input">
+                            <button class="btn btn-primary" onclick="loadTableByDate()">
+                                <i class="fas fa-search"></i>
+                                عرض جدول الحضور
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Show All Students Button -->
+                    <div class="students-section">
+                        <h5>إدارة بيانات الطلاب</h5>
+                        <button class="btn btn-success" onclick="showAllStudents()">
+                            <i class="fas fa-users"></i>
+                            إدارة بيانات الطلاب
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-            if ( daynum == 6 ){ //'السبت'
-                today.setDate(today.getDate() - 2);
-                let year = today.getFullYear();
-                let month = today.getMonth() +1;
-                let day = today.getDate();
-                if ( day < 10 ){
-                    firstDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    firstDate = `_${day}_0${month}_${year}`; 
-                }
+            <!-- GitHub Upload Help Section -->
+            <div class="github-help-card">
+                <div class="card-header">
+                    <h3>مساعدة رفع قاعدة البيانات</h3>
+                </div>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4><i class="fab fa-github"></i> رفع تلقائي إلى GitHub</h4>
+                        <p>اضغط على زر "رفع قاعدة البيانات إلى GitHub" لرفع الملف تلقائياً. سيتم استبدال الملف الموجود في المستودع.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4><i class="fas fa-download"></i> تحميل يدوي</h4>
+                        <p>اضغط على زر "تحميل قاعدة البيانات" لتحميل الملف محلياً، ثم ارفعه يدوياً إلى GitHub.</p>
+                    </div>
+                    <div class="help-item">
+                        <h4><i class="fas fa-info-circle"></i> ملاحظات مهمة</h4>
+                        <ul>
+                            <li>تأكد من حفظ التغييرات قبل الرفع</li>
+                            <li>سيتم تحديث الموقع تلقائياً خلال دقائق قليلة</li>
+                            <li>في حالة فشل الرفع التلقائي، استخدم الطريقة اليدوية</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    secondDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    secondDate = `_${day}_0${month}_${year}`; 
-                } 
+    <script>
+        let count = 0, IDs = [], names = [], nums = [], parent = [];
+        let db = "";
+        let selectedSection = "SEC3";
+        let today = new Date();
+        let daynum = today.getDay();
 
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    thirdDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    thirdDate = `_${day}_0${month}_${year}`; 
-                }
-            }
+        let firstDate = "";
+        let secondDate = "";
+        let thirdDate = "";
 
-            if ( daynum == 0 ){ //الاحد
-                today.setDate(today.getDate() - 3);
-                let year = today.getFullYear();
-                let month = today.getMonth() +1;
-                let day = today.getDate();
-                if ( day < 10 ){
-                    firstDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    firstDate = `_${day}_0${month}_${year}`; 
-                }
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    secondDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    secondDate = `_${day}_0${month}_${year}`; 
-                }
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    thirdDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    thirdDate = `_${day}_0${month}_${year}`; 
-                }
-            }
-
-            if ( daynum == 1 ){ //"الاتنين"
-                today.setDate(today.getDate() - 4);
-                let year = today.getFullYear();
-                let month = today.getMonth() +1;
-                let day = today.getDate();
-                if ( day < 10 ){
-                    firstDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    firstDate = `_${day}_0${month}_${year}`; 
-                } 
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    secondDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    secondDate = `_${day}_0${month}_${year}`; 
-                } 
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    thirdDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    thirdDate = `_${day}_0${month}_${year}`; 
-                }
-            }
-
-            if ( daynum == 2 ){ //"التلات"
-                today.setDate(today.getDate() - 1);
-                let year = today.getFullYear();
-                let month = today.getMonth() +1;
-                let day = today.getDate();
-                if ( day < 10 ){
-                    firstDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    firstDate = `_${day}_0${month}_${year}`; 
-                } 
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    secondDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    secondDate = `_${day}_0${month}_${year}`; 
-                } 
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    thirdDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    thirdDate = `_${day}_0${month}_${year}`; 
-                }
-            }
-            if ( daynum == 3 ){ //"الاربع"
-                today.setDate(today.getDate() - 2);
-                let year = today.getFullYear();
-                let month = today.getMonth() +1;
-                let day = today.getDate();
-                if ( day < 10 ){
-                    firstDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    firstDate = `_${day}_0${month}_${year}`; 
-                }
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    secondDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    secondDate = `_${day}_0${month}_${year}`; 
-                } 
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    thirdDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    thirdDate = `_${day}_0${month}_${year}`; 
-                }
-            }
-            if ( daynum == 4 ){ //"الخميس"
-                today.setDate(today.getDate() - 3);
-                let year = today.getFullYear();
-                let month = today.getMonth() +1;
-                let day = today.getDate();
-                if ( day < 10 ){
-                    firstDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    firstDate = `_${day}_0${month}_${year}`; 
-                } 
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    secondDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    secondDate = `_${day}_0${month}_${year}`; 
-                } 
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    thirdDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    thirdDate = `_${day}_0${month}_${year}`; 
-                }
-            }
-            if ( daynum == 5 ){ //"الحمعة"
-                today.setDate(today.getDate() - 1);
-                let year = today.getFullYear();
-                let month = today.getMonth() +1;
-                let day = today.getDate();
-                if ( day < 10 ){
-                    firstDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    firstDate = `_${day}_0${month}_${year}`; 
-                }
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    secondDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    secondDate = `_${day}_0${month}_${year}`; 
-                } 
-
-                today.setDate(today.getDate() - 1);
-                year = today.getFullYear();
-                month = today.getMonth() +1;
-                day = today.getDate();
-                if ( day < 10 ){
-                    thirdDate = `_0${day}_0${month}_${year}`; 
-                }
-                else{
-                    thirdDate = `_${day}_0${month}_${year}`; 
-                }
-            }
-
-            today = new Date();
+        // Date calculation logic (keeping existing logic)
+        if (daynum == 6) { //'السبت'
+            today.setDate(today.getDate() - 2);
             let year = today.getFullYear();
-            let month = today.getMonth() +1;
+            let month = today.getMonth() + 1;
             let day = today.getDate();
-            let currentdate = `_${day}_0${month}_${year}`;
-            console.log(firstDate,secondDate,thirdDate,currentdate);
-
-            async function loadDatabase() {
-
-                try{
-                    
-                    const SQL = await initSqlJs({ locateFile:() => "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.wasm" });
-                    
-                // Fetch the database file from GitHub
-                    let response = await fetch("https://raw.githubusercontent.com/Abdelrhman-Ahmed1/Konoz/main/data.db");
-                    let buffer = await response.arrayBuffer();
-                    db = new SQL.Database(new Uint8Array(buffer));
-                    
-                    // Run SQL query
-                    let result = db.exec("SELECT * FROM SEC3;");
-                    //document.getElementById("output").textContent = JSON.stringify(result, null, 2);
-                    alert("كل حاجه زي الفل");
-                }catch{
-                    alert("!!!كلم عبدالرحمن في مشكلة");
-                };
-            
-            };
-
-            async function getData(){
-
-                var id = document.getElementById("lll").value;
-                let name,fstnum,secnum,day1 = false,day2 = false,day3 = false,absence;
-
-
-                if (id == ""){
-                    alert("دخل الكود او الرقم");
-                    return 0;
-                }
-                
-                else if (id.length > 5){
-                    for ( let x = 0; x < IDs.length; x++ ){
-                        if ( id == nums[x] ){
-                            alert("الطالب متسجل حضور");
-                            return 0;
-                        }
-                    }
-                    var number = id; 
-                    try{
-                        let result = db.exec(`SELECT ID,Name,Mobile_Number,Parent_Number FROM SEC3 where Mobile_Number = ${number};`);
-                        let arr = [];
-                        result.forEach(item => {arr = JSON.stringify(item['values']).split(',');});
-                        id = arr[0].split('[').join('');
-                        name = arr[1];
-                        fstnum = arr[2];
-                        secnum = arr[3].split(']').join('');
-                        try{
-                            let result = db.exec(`SELECT ID FROM ${firstDate} where ID = ${id};`);
-                            day1 = result.length > 0;
-                        }
-                        catch{
-                            day1 = false;
-                        }
-                        try{
-                            let result = db.exec(`SELECT ID FROM ${secondDate} where ID = ${id};`);
-                            day2 = result.length > 0;
-                        }
-                        catch{
-                            day2 = false;
-                        }
-                        try{
-                            let result = db.exec(`SELECT ID FROM ${thirdDate} where ID = ${id};`);
-                            day3 = result.length > 0;
-                        }
-                        catch{
-                            day3 = false;
-                        }
-                        if ( day1 == false && day2 == false && day3 == false){
-                            absence = "محضرش اخر حصة";
-                        };
-                    }catch{
-                        absence = "ملوش كود هنسجل رقمه معانا";
-                        name = "99999999999";
-                        fstnum = secnum = "99999999999";
-                    }
-                }
-                else{ 
-                    for ( let x = 0; x < IDs.length; x++ ){
-                        if ( id == IDs[x] ){
-                            alert("الطالب متسجل حضور");
-                            return 0;
-                        }
-                    }
-                    try{
-                        let result = db.exec(`SELECT ID,Name,Mobile_Number,Parent_Number FROM SEC3 where ID = ${id};`);
-                        let arr = [];
-                        result.forEach(item => {arr = JSON.stringify(item['values']).split(',');});
-                        id = arr[0].split('[').join('');
-                        name = arr[1];
-                        fstnum = arr[2];
-                        secnum = arr[3].split(']').join('');
-                        try{
-                            let result = db.exec(`SELECT ID FROM ${firstDate} where ID = ${id};`);
-                            day1 = result.length > 0;
-                        }
-                        catch{
-                            day1 = false;
-                        }
-                        try{
-                            let result = db.exec(`SELECT ID FROM ${secondDate} where ID = ${id};`);
-                            day2 = result.length > 0;
-                        }
-                        catch{
-                            day2 = false;
-                        }
-                        try{
-                            
-                            let result = db.exec(`SELECT ID FROM ${thirdDate} where ID = ${id};`);
-                            day3 = result.length > 0;
-                        }
-                        catch{
-                            day3 = false;
-                        }
-                        if ( day1 == false && day2 == false && day3 == false){
-                            absence = "محضرش اخر حصة";
-                        }
-                    }
-                    catch{
-                        alert("الكود مش متسجل");
-                        return 0;
-                    }    
-                }
-                
-                let confirm2 = confirm(id + "\n" + name + "\n" + fstnum + "\n" + secnum + "\n" + absence);
-                if ( confirm2 ){
-
-                    IDs.push(id);
-                    names.push(name.split('\"').join(''));
-                    nums.push(fstnum.split('\"').join(''));
-                    parent.push(secnum.split('\"').join(''));
-                    
-                    
-                    /*localStorage.setItem('IDs',IDs);
-                    localStorage.setItem('names',names);
-                    localStorage.setItem('nums',nums);
-                    localStorage.setItem('parent',parent);*/
-                    count = parseInt(count) + 1;
-                    
-                   /* localStorage.setItem('count',count); */
-                    document.getElementById("count").value = count;
-                    document.getElementById("lll").value = "";
-                    
-                    return 0;
-                }
-                else{
-                    return 0;
-                }
-
-
-
-
-
-
+            if (day < 10) {
+                firstDate = `_0${day}_0${month}_${year}`;
+            } else {
+                firstDate = `_${day}_0${month}_${year}`;
             }
-            window.onload = () => {
-                document.getElementById("count").value = 0;
-                loadDatabase();
-            };
-            async function countt(){
-                let result = "";
-                for (let i = 0; i < IDs.length; i++) {
-                    result += `   ${IDs[i]}: ${names[i]}   `;
-                    
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                secondDate = `_0${day}_0${month}_${year}`;
+            } else {
+                secondDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                thirdDate = `_0${day}_0${month}_${year}`;
+            } else {
+                thirdDate = `_${day}_0${month}_${year}`;
+            }
+        }
+
+        if (daynum == 0) { //الاحد
+            today.setDate(today.getDate() - 3);
+            let year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            if (day < 10) {
+                firstDate = `_0${day}_0${month}_${year}`;
+            } else {
+                firstDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                secondDate = `_0${day}_0${month}_${year}`;
+            } else {
+                secondDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                thirdDate = `_0${day}_0${month}_${year}`;
+            } else {
+                thirdDate = `_${day}_0${month}_${year}`;
+            }
+        }
+
+        if (daynum == 1) { //"الاتنين"
+            today.setDate(today.getDate() - 4);
+            let year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            if (day < 10) {
+                firstDate = `_0${day}_0${month}_${year}`;
+            } else {
+                firstDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                secondDate = `_0${day}_0${month}_${year}`;
+            } else {
+                secondDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                thirdDate = `_0${day}_0${month}_${year}`;
+            } else {
+                thirdDate = `_${day}_0${month}_${year}`;
+            }
+        }
+
+        if (daynum == 2) { //"التلات"
+            today.setDate(today.getDate() - 1);
+            let year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            if (day < 10) {
+                firstDate = `_0${day}_0${month}_${year}`;
+            } else {
+                firstDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                secondDate = `_0${day}_0${month}_${year}`;
+            } else {
+                secondDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                thirdDate = `_0${day}_0${month}_${year}`;
+            } else {
+                thirdDate = `_${day}_0${month}_${year}`;
+            }
+        }
+        if (daynum == 3) { //"الاربع"
+            today.setDate(today.getDate() - 2);
+            let year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            if (day < 10) {
+                firstDate = `_0${day}_0${month}_${year}`;
+            } else {
+                firstDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                secondDate = `_0${day}_0${month}_${year}`;
+            } else {
+                secondDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                thirdDate = `_0${day}_0${month}_${year}`;
+            } else {
+                thirdDate = `_${day}_0${month}_${year}`;
+            }
+        }
+        if (daynum == 4) { //"الخميس"
+            today.setDate(today.getDate() - 3);
+            let year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            if (day < 10) {
+                firstDate = `_0${day}_0${month}_${year}`;
+            } else {
+                firstDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                secondDate = `_0${day}_0${month}_${year}`;
+            } else {
+                secondDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                thirdDate = `_0${day}_0${month}_${year}`;
+            } else {
+                thirdDate = `_${day}_0${month}_${year}`;
+            }
+        }
+        if (daynum == 5) { //"الحمعة"
+            today.setDate(today.getDate() - 1);
+            let year = today.getFullYear();
+            let month = today.getMonth() + 1;
+            let day = today.getDate();
+            if (day < 10) {
+                firstDate = `_0${day}_0${month}_${year}`;
+            } else {
+                firstDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                secondDate = `_0${day}_0${month}_${year}`;
+            } else {
+                secondDate = `_${day}_0${month}_${year}`;
+            }
+
+            today.setDate(today.getDate() - 1);
+            year = today.getFullYear();
+            month = today.getMonth() + 1;
+            day = today.getDate();
+            if (day < 10) {
+                thirdDate = `_0${day}_0${month}_${year}`;
+            } else {
+                thirdDate = `_${day}_0${month}_${year}`;
+            }
+        }
+
+        today = new Date();
+        let year = today.getFullYear();
+        let month = today.getMonth() + 1;
+        let day = today.getDate();
+        let currentdate = `_${day}_0${month}_${year}`;
+        console.log(firstDate, secondDate, thirdDate, currentdate);
+
+        // Section selection function
+        function selectSection(section) {
+            selectedSection = section;
+            document.querySelectorAll('.section-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update UI to show selected section
+            let sectionDisplayName = section;
+            if (section === 'SEC3') {
+                sectionDisplayName = 'علمي رياضة';
+            } else if (section === 'SEC33') {
+                sectionDisplayName = 'ادبي الفا';
+            } else if (section === 'SEC33_2') {
+                sectionDisplayName = 'ادبي الراعي';
+            }
+            document.querySelector('.header h1').textContent = `نظام إدارة الحضور - ${sectionDisplayName}`;
+        }
+
+        // Get the actual database table name based on selected section
+        function getDatabaseTableName() {
+            if (selectedSection === 'SEC3') {
+                return 'SEC3';
+            } else if (selectedSection === 'SEC33' || selectedSection === 'SEC33_2') {
+                return 'SEC33'; // Both ادبي sections use SEC33 table
+            }
+            return selectedSection;
+        }
+
+        // Get the date table prefix based on selected section
+        function getDateTablePrefix() {
+            if (selectedSection === 'SEC3') {
+                return currentdate;
+            } else if (selectedSection === 'SEC33') {
+                return 'date_A'; // ادبي الفا
+            } else if (selectedSection === 'SEC33_2') {
+                return 'date_R'; // ادبي الراعي
+            }
+            return currentdate;
+        }
+
+        async function loadDatabase() {
+            try {
+                console.log('Loading database...');
+                const SQL = await initSqlJs({ locateFile: () => "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.wasm" });
+                
+                // Fetch the database file from GitHub
+                console.log('Fetching database from GitHub...');
+                let response = await fetch("https://raw.githubusercontent.com/Abdelrhman-Ahmed1/Konoz/main/data.db");
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch database: ${response.status} ${response.statusText}`);
                 }
                 
-                document.getElementById("n").textContent = result;
+                let buffer = await response.arrayBuffer();
+                db = new SQL.Database(new Uint8Array(buffer));
+                
+                console.log('Database loaded successfully, testing connection...');
+                
+                // Test connection by querying the current section table
+                const tableName = getDatabaseTableName();
+                let result = db.exec(`SELECT COUNT(*) as count FROM ${tableName};`);
+                console.log(`Database test successful. Found ${result[0].values[0][0]} students in ${tableName}`);
+                
+                // Database loaded successfully
+                
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    تم تحميل قاعدة البيانات بنجاح
+                `;
+                notification.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error("Error loading database:", error);
+                
+                // Show error notification
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    خطأ في تحميل قاعدة البيانات: ${error.message}
+                `;
+                notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 5000);
+                
+                alert("!!!كلم عبدالرحمن في مشكلة في تحميل قاعدة البيانات");
+            }
+        }
+
+        async function getData() {
+            var id = document.getElementById("studentInput").value;
+            let name, fstnum, secnum, day1 = false, day2 = false, day3 = false, absence;
+
+            if (id == "") {
+                alert("دخل الكود او الرقم");
+                return 0;
+            } else if (id.length > 5) {
+                for (let x = 0; x < IDs.length; x++) {
+                    if (id == nums[x]) {
+                        alert("الطالب متسجل حضور");
+                        return 0;
+                    }
+                }
+                var number = id;
+                try {
+                    let result = db.exec(`SELECT ID,Name,Mobile_Number,Parent_Number FROM ${getDatabaseTableName()} where Mobile_Number = ${number};`);
+                    let arr = [];
+                    result.forEach(item => { arr = JSON.stringify(item['values']).split(','); });
+                    id = arr[0].split('[').join('');
+                    name = arr[1];
+                    fstnum = arr[2];
+                    secnum = arr[3].split(']').join('');
+                    try {
+                        let result = db.exec(`SELECT ID FROM ${firstDate} where ID = ${id};`);
+                        day1 = result.length > 0;
+                    } catch {
+                        day1 = false;
+                    }
+                    try {
+                        let result = db.exec(`SELECT ID FROM ${secondDate} where ID = ${id};`);
+                        day2 = result.length > 0;
+                    } catch {
+                        day2 = false;
+                    }
+                    try {
+                        let result = db.exec(`SELECT ID FROM ${thirdDate} where ID = ${id};`);
+                        day3 = result.length > 0;
+                    } catch {
+                        day3 = false;
+                    }
+                    if (day1 == false && day2 == false && day3 == false) {
+                        absence = "محضرش اخر حصة";
+                    }
+                } catch {
+                    absence = "ملوش كود هنسجل رقمه معانا";
+                    name = "99999999999";
+                    fstnum = secnum = "99999999999";
+                }
+            } else {
+                for (let x = 0; x < IDs.length; x++) {
+                    if (id == IDs[x]) {
+                        alert("الطالب متسجل حضور");
+                        return 0;
+                    }
+                }
+                try {
+                    let result = db.exec(`SELECT ID,Name,Mobile_Number,Parent_Number FROM ${getDatabaseTableName()} where ID = ${id};`);
+                    let arr = [];
+                    result.forEach(item => { arr = JSON.stringify(item['values']).split(','); });
+                    id = arr[0].split('[').join('');
+                    name = arr[1];
+                    fstnum = arr[2];
+                    secnum = arr[3].split(']').join('');
+                    try {
+                        let result = db.exec(`SELECT ID FROM ${firstDate} where ID = ${id};`);
+                        day1 = result.length > 0;
+                    } catch {
+                        day1 = false;
+                    }
+                    try {
+                        let result = db.exec(`SELECT ID FROM ${secondDate} where ID = ${id};`);
+                        day2 = result.length > 0;
+                    } catch {
+                        day2 = false;
+                    }
+                    try {
+                        let result = db.exec(`SELECT ID FROM ${thirdDate} where ID = ${id};`);
+                        day3 = result.length > 0;
+                    } catch {
+                        day3 = false;
+                    }
+                    if (day1 == false && day2 == false && day3 == false) {
+                        absence = "محضرش اخر حصة";
+                    }
+                } catch {
+                    alert("الكود مش متسجل");
+                    return 0;
+                }
+            }
+
+            // Show confirmation dialog like in main.py
+            const confirmMessage = `${id}\n${name}\n${fstnum}\n${secnum}\n${absence || ''}`;
+            const confirm2 = confirm(confirmMessage);
+            
+            if (confirm2) {
+                // Get current time for attendance
+                const currentTime = new Date().toLocaleTimeString('ar-EG', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                });
+                
+                IDs.push(id);
+                names.push(name.split('\"').join(''));
+                nums.push(fstnum.split('\"').join(''));
+                parent.push(secnum.split('\"').join(''));
+
+                count = parseInt(count) + 1;
+                document.getElementById("count").textContent = count;
+                document.getElementById("studentInput").value = "";
+
+                // Update attendance list
+                updateAttendanceList();
+                
+                // Show success message
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    تم تسجيل الطالب بنجاح - ${currentTime}
+                `;
+                notification.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+                
+                return 0;
+            } else {
                 return 0;
             }
-            async function whats(){
-                
-                let message = IDs.join('\n');
-                const url = `https://api.whatsapp.com/send?phone=${+201555115339}&text=${encodeURIComponent(message)}`;
-                
-                window.open(url, "_blank");
+        }
+
+        function updateAttendanceList() {
+            const listContainer = document.getElementById('n');
+            listContainer.innerHTML = '';
+            
+            for (let i = 0; i < IDs.length; i++) {
+                const item = document.createElement('div');
+                item.className = 'attendance-item';
+                item.innerHTML = `
+                    <span class="student-id">${IDs[i]}</span>
+                    <span class="student-name">${names[i]}</span>
+                    <button class="remove-btn" onclick="removeAttendance(${i})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                listContainer.appendChild(item);
             }
-            async function excell(){
-                                // Sample data
-                const data = [];
-                for ( let x = 0; x < IDs.length; x++){
-                    data.push([`${IDs[x]}`,`${names[x]}`,`${nums[x]}`,`${parent[x]}`]);
+        }
+
+        function removeAttendance(index) {
+            IDs.splice(index, 1);
+            names.splice(index, 1);
+            nums.splice(index, 1);
+            parent.splice(index, 1);
+            count--;
+            document.getElementById("count").textContent = count;
+            updateAttendanceList();
+        }
+
+        async function countt() {
+            updateAttendanceList();
+            return 0;
+        }
+
+        async function whats() {
+            let message = IDs.join('\n');
+            const url = `https://api.whatsapp.com/send?phone=${+201555115339}&text=${encodeURIComponent(message)}`;
+            window.open(url, "_blank");
+        }
+
+        async function excell() {
+            // Sample data
+            const data = [];
+            for (let x = 0; x < IDs.length; x++) {
+                data.push([`${IDs[x]}`, `${names[x]}`, `${nums[x]}`, `${parent[x]}`]);
+            }
+
+            // Convert data to a worksheet
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            // Create a new workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, `${currentdate}`);
+
+            // Generate and download the Excel file
+            let sectionDisplayName = selectedSection;
+            if (selectedSection === 'SEC3') {
+                sectionDisplayName = 'القسم_الثالث';
+            } else if (selectedSection === 'SEC33') {
+                sectionDisplayName = 'ادبي_الفا';
+            } else if (selectedSection === 'SEC33_2') {
+                sectionDisplayName = 'ادبي_الراعي';
+            }
+            XLSX.writeFile(wb, `سجل_حضور_${sectionDisplayName}_بتاريخ${currentdate}.xlsx`);
+        }
+
+        // New functions for table management
+        async function createAttendanceTable() {
+            const tableName = document.getElementById('tableName').value;
+            const tableDate = document.getElementById('tableDate').value;
+            
+            if (!tableName) {
+                alert('يرجى إدخال اسم الجدول');
+                return;
+            }
+            
+            try {
+                // Create table with the structure: name, id, day, mark
+                const createTableSQL = `
+                    CREATE TABLE IF NOT EXISTS ${tableName} (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT,
+                        day TEXT,
+                        mark TEXT
+                    );
+                `;
+                
+                db.exec(createTableSQL);
+                
+                // Insert sample data from current section
+                const students = db.exec(`SELECT ID, Name FROM ${getDatabaseTableName()}`);
+                if (students.length > 0) {
+                    const values = students[0].values;
+                    for (let i = 0; i < values.length; i++) {
+                        const insertSQL = `
+                            INSERT INTO ${tableName} (id, name, day, mark) 
+                            VALUES (${values[i][0]}, '${values[i][1]}', '${tableDate || currentdate}', '');
+                        `;
+                        db.exec(insertSQL);
+                    }
+                }
+                
+                alert('تم إنشاء جدول الحضور بنجاح');
+                
+                // Clear inputs
+                document.getElementById('tableName').value = '';
+                document.getElementById('tableDate').value = '';
+                
+            } catch (error) {
+                console.error('Error creating table:', error);
+                alert('حدث خطأ في إنشاء الجدول');
+            }
+        }
+
+        async function createAutoTable() {
+            const tableDate = document.getElementById('tableDate').value;
+            const today = new Date();
+            
+            // Generate date string in the format _DD_MM_YYYY
+            let dateString;
+            if (tableDate) {
+                const date = new Date(tableDate);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                dateString = `_${day}_${month}_${year}`;
+            } else {
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = (today.getMonth() + 1).toString().padStart(2, '0');
+                const year = today.getFullYear();
+                dateString = `_${day}_${month}_${year}`;
+            }
+            
+            // Generate automatic table name based on section and date
+            let autoTableName;
+            if (selectedSection === 'SEC3') {
+                autoTableName = dateString; // _15_12_2024
+            } else if (selectedSection === 'SEC33') {
+                autoTableName = `${dateString}_A`; // _15_12_2024_A
+            } else if (selectedSection === 'SEC33_2') {
+                autoTableName = `${dateString}_R`; // _15_12_2024_R
+            } else {
+                autoTableName = `${dateString}_${selectedSection}`;
+            }
+            
+            try {
+                // Check if table already exists
+                const existingTable = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${autoTableName}'`);
+                if (existingTable.length > 0) {
+                    if (!confirm(`الجدول ${autoTableName} موجود بالفعل. هل تريد استبداله؟`)) {
+                        return;
+                    }
+                    // Drop existing table
+                    db.exec(`DROP TABLE ${autoTableName}`);
+                }
+                
+                // Get current day name in Arabic
+                const date = tableDate ? new Date(tableDate) : today;
+                const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+                let dayName = dayNames[date.getDay()];
+                
+                // Special handling for Friday
+                if (date.getDay() === 5) { // Friday
+                    if (selectedSection === 'SEC33') {
+                        dayName = 'الفا';
+                    } else if (selectedSection === 'SEC33_2') {
+                        dayName = 'الراعي';
+                    }
+                }
+                
+                // Create table with the structure: id, name, day, time, mark
+                const createTableSQL = `
+                    CREATE TABLE IF NOT EXISTS ${autoTableName} (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT,
+                        day TEXT,
+                        time TEXT,
+                        mark TEXT
+                    );
+                `;
+                
+                db.exec(createTableSQL);
+                
+                // Get all students from the current section
+                const students = db.exec(`SELECT ID, Name FROM ${getDatabaseTableName()}`);
+                if (students.length > 0) {
+                    const values = students[0].values;
+                    for (let i = 0; i < values.length; i++) {
+                        const insertSQL = `
+                            INSERT INTO ${autoTableName} (id, name, day, time, mark) 
+                            VALUES (${values[i][0]}, '${values[i][1]}', '${dayName}', '', '0');
+                        `;
+                        db.exec(insertSQL);
+                    }
+                    alert(`تم إنشاء جدول الحضور التلقائي بنجاح: ${autoTableName}\nتم إضافة ${values.length} طالب`);
+                } else {
+                    alert('لا يوجد طلاب في القسم المحدد.');
+                    return;
+                }
+                
+                // Export the modified database
+                exportModifiedDatabase();
+                
+                // Auto upload to GitHub after saving
+                try {
+                    console.log('Auto uploading to GitHub after saving attendance...');
+                    
+                    // Show loading notification
+                    const notification = document.createElement('div');
+                    notification.className = 'status-notification';
+                    notification.innerHTML = `
+                        <i class="fas fa-spinner fa-spin"></i>
+                        جاري رفع قاعدة البيانات إلى GitHub...
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    // Call the GitHub upload function
+                    await quickUploadToGitHub();
+                    
+                    // Update notification to success
+                    notification.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        تم حفظ الحضور ورفعه إلى GitHub بنجاح!
+                    `;
+                    notification.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                    
+                    // Remove notification after 5 seconds
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 5000);
+                    
+                } catch (uploadError) {
+                    console.error('Error auto uploading to GitHub:', uploadError);
+                    
+                    // Show error notification
+                    const notification = document.querySelector('.status-notification');
+                    if (notification) {
+                        notification.innerHTML = `
+                            <i class="fas fa-exclamation-triangle"></i>
+                            تم حفظ الحضور ولكن فشل في الرفع إلى GitHub: ${uploadError.message}
+                        `;
+                        notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                        
+                        setTimeout(() => {
+                            if (notification.parentNode) {
+                                notification.parentNode.removeChild(notification);
+                            }
+                        }, 8000);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error creating auto table:', error);
+                alert('حدث خطأ في إنشاء الجدول التلقائي');
+            }
+        }
+
+        async function loadTableByDate() {
+            try {
+                const selectedDate = document.getElementById('specificDate').value;
+                if (!selectedDate) {
+                    alert('الرجاء اختيار تاريخ');
+                    return;
                 }
 
-                // Convert data to a worksheet
-                const ws = XLSX.utils.aoa_to_sheet(data);
+                console.log('=== Loading Attendance Table ===');
+                console.log('Selected date:', selectedDate);
+                console.log('Selected section:', selectedSection);
 
-                // Create a new workbook
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, `${currentdate}`);
+                // Convert date to table name format (DD_MM_YYYY)
+                const date = new Date(selectedDate);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                
+                // Generate table name based on section
+                let tableName;
+                if (selectedSection === 'SEC3') {
+                    tableName = `_${day}_${month}_${year}`;
+                } else if (selectedSection === 'SEC33') {
+                    tableName = `_${day}_${month}_${year}_A`; // ادبي الفا
+                } else if (selectedSection === 'SEC33_2') {
+                    tableName = `_${day}_${month}_${year}_R`; // ادبي الراعي
+                } else {
+                    tableName = `_${day}_${month}_${year}`;
+                }
 
-                // Generate and download the Excel file
-                XLSX.writeFile(wb, `سجل_حضور_بتاريخ${currentdate}.xlsx`);
+                console.log('Generated table name:', tableName);
 
+                // List all existing tables for debugging
+                const allTables = listAllTables();
+                console.log('All tables in database:', allTables);
+
+                // Check if table exists
+                const tableExists = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`);
+                console.log('Table exists:', tableExists.length > 0);
+                
+                if (tableExists.length === 0) {
+                    console.log('Creating new attendance table...');
+                    // Create new attendance table for this date
+                    await createAttendanceTableForDate(selectedDate, tableName);
+                    
+                    // Verify table was created
+                    const verifyTable = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`);
+                    console.log('Table created successfully:', verifyTable.length > 0);
+                }
+
+                // Load and display the attendance table
+                console.log('Displaying attendance table...');
+                viewAttendanceTable(tableName, selectedDate);
+                
+            } catch (error) {
+                console.error('Error loading table by date:', error);
+                alert('حدث خطأ في تحميل الجدول: ' + error.message);
             }
-        </script>
-        <header>
-            <h1>Konoz</h1>
-        </header>
-        <div id="main_label">
-            <img src="icon.png" width="150">
-            <p>كنوز ويب سايت</p>
-            <div id="box">
-                <input type="number" placeholder="الكود او رقم الموبايل" id="lll">
-                <input type="button" value="سجل حضور" id="button" onclick=getData()>
-                <br>
-                <br>
-                <input type="button" id="count" onclick=countt()>
-                
-                
-            </div>
-            
-            <h6 id="n"></h6>
-            <input type="button" value="اعمل اكسيل" id="button2" onclick=excell()>
-            <input type="button" value="ابعت لعبدالرحمن" id="button3" onclick=whats()>
-            <br>
-            <br>
-            <br>
+        }
 
-        </div>
+        // Function to create attendance table for a specific date
+        async function createAttendanceTableForDate(dateString, tableName) {
+            try {
+                console.log('Creating attendance table for date:', dateString);
+                console.log('Table name:', tableName);
+                
+                // Get current day name in Arabic
+                const date = new Date(dateString);
+                const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+                let dayName = dayNames[date.getDay()];
+                
+                // Special handling for Friday
+                if (date.getDay() === 5) { // Friday
+                    if (selectedSection === 'SEC33') {
+                        dayName = 'الفا';
+                    } else if (selectedSection === 'SEC33_2') {
+                        dayName = 'الراعي';
+                    }
+                }
+                
+                console.log('Day name:', dayName);
+
+                // Create table with the structure: id, name, day, time, mark
+                const createTableSQL = `
+                    CREATE TABLE IF NOT EXISTS ${tableName} (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT,
+                        day TEXT,
+                        time TEXT,
+                        mark TEXT
+                    );
+                `;
+                
+                console.log('Creating table with SQL:', createTableSQL);
+                db.exec(createTableSQL);
+                
+                // Get all students from the current section
+                const students = db.exec(`SELECT ID, Name FROM ${getDatabaseTableName()}`);
+                console.log('Students from section:', students);
+                
+                if (students.length > 0) {
+                    const values = students[0].values;
+                    console.log('Number of students to add:', values.length);
+                    
+                    for (let i = 0; i < values.length; i++) {
+                        const insertSQL = `
+                            INSERT INTO ${tableName} (id, name, day, time, mark) 
+                            VALUES (${values[i][0]}, '${values[i][1]}', '${dayName}', '', '0');
+                        `;
+                        console.log('Inserting student:', values[i][0], values[i][1]);
+                        db.exec(insertSQL);
+                    }
+                    
+                    console.log(`Created attendance table ${tableName} for date ${dateString} with ${values.length} students`);
+                } else {
+                    console.log('No students found in section');
+                }
+                
+            } catch (error) {
+                console.error('Error creating attendance table for date:', error);
+                throw error;
+            }
+        }
+
+        // Function to view attendance table
+        async function viewAttendanceTable(tableName, dateString) {
+            try {
+                console.log('Viewing attendance table:', tableName);
+                const result = db.exec(`SELECT * FROM ${tableName}`);
+                console.log('Query result:', result);
+                
+                if (result.length > 0) {
+                    const data = result[0].values;
+                    console.log('Attendance data:', data);
+                    console.log('Number of students in attendance table:', data.length);
+                    
+                    // Create modal container
+                    const modal = document.createElement('div');
+                    modal.className = 'table-modal';
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>جدول الحضور - ${dateString}</h3>
+                                <button class="close-btn" onclick="closeModal()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="table-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">إجمالي الطلاب:</span>
+                                        <span class="stat-value">${data.length}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">الحضور:</span>
+                                        <span class="stat-value">${data.filter(row => row[4] === '1').length}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">الغياب:</span>
+                                        <span class="stat-value">${data.filter(row => row[4] === '0').length}</span>
+                                    </div>
+                                </div>
+                                <div class="table-container">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>الرقم</th>
+                                                <th>الاسم</th>
+                                                <th>اليوم</th>
+                                                <th>الوقت</th>
+                                                <th>الحالة</th>
+                                                <th>الإجراءات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${data.map((row, index) => `
+                                                <tr>
+                                                    <td class="student-id-cell">${row[0]}</td>
+                                                    <td class="student-name-cell">${row[1]}</td>
+                                                    <td class="date-cell">${row[2]}</td>
+                                                    <td class="time-cell">${row[3] || '-'}</td>
+                                                    <td class="status-cell">
+                                                        <span class="attendance-status ${row[4] === '1' ? 'present' : 'absent'}">
+                                                            ${row[4] === '1' ? '<i class="fas fa-check-circle"></i> حاضر' : '<i class="fas fa-times-circle"></i> غائب'}
+                                                        </span>
+                                                    </td>
+                                                    <td class="actions-cell">
+                                                        <button class="btn btn-sm btn-primary" onclick="markPresent('${tableName}', ${row[0]})">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-danger" onclick="markAbsent('${tableName}', ${row[0]})">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-success" onclick="exportTableToExcel('${tableName}')">
+                                    <i class="fas fa-file-excel"></i>
+                                    تصدير Excel
+                                </button>
+                                <button class="btn btn-secondary" onclick="closeModal()">
+                                    <i class="fas fa-times"></i>
+                                    إغلاق
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(modal);
+                    console.log('Attendance table modal created and displayed');
+                    
+                } else {
+                    console.log('Attendance table is empty');
+                    alert('الجدول فارغ');
+                }
+            } catch (error) {
+                console.error('Error viewing attendance table:', error);
+                alert('حدث خطأ في عرض جدول الحضور');
+            }
+        }
+
+        // Function to update attendance time
+        function updateAttendanceTime(tableName, studentId, timeValue) {
+            try {
+                db.exec(`UPDATE ${tableName} SET time = '${timeValue}' WHERE id = ${studentId}`);
+                console.log(`Updated attendance time for student ${studentId} in table ${tableName} to ${timeValue}`);
+                
+                // Show notification that changes are saved in memory
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-info-circle"></i>
+                    تم تحديث وقت الحضور في الذاكرة. لاحظ: يجب تصدير قاعدة البيانات لحفظ التغييرات نهائياً.
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error updating attendance time:', error);
+                alert('حدث خطأ في تحديث وقت الحضور');
+            }
+        }
+
+        // Function to update attendance status
+        function updateAttendanceStatus(tableName, studentId, status) {
+            try {
+                db.exec(`UPDATE ${tableName} SET mark = '${status}' WHERE id = ${studentId}`);
+                console.log(`Updated attendance status for student ${studentId} in table ${tableName} to ${status}`);
+                
+                // Show notification that changes are saved in memory
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-info-circle"></i>
+                    تم تحديث حالة الحضور في الذاكرة. لاحظ: يجب تصدير قاعدة البيانات لحفظ التغييرات نهائياً.
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error updating attendance status:', error);
+                alert('حدث خطأ في تحديث حالة الحضور');
+            }
+        }
+
+        // Update markPresent and markAbsent functions for attendance table
+        function markPresent(tableName, studentId) {
+            const currentTime = new Date().toLocaleTimeString('ar-EG', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            updateAttendanceTime(tableName, studentId, currentTime);
+            updateAttendanceStatus(tableName, studentId, '1');
+            
+            // Update the time input and status select in the modal
+            const timeInput = document.querySelector(`input[onchange*="${studentId}"]`);
+            const statusSelect = document.querySelector(`select[onchange*="${studentId}"]`);
+            if (timeInput) {
+                timeInput.value = currentTime;
+            }
+            if (statusSelect) {
+                statusSelect.value = '1';
+            }
+        }
+
+        function markAbsent(tableName, studentId) {
+            updateAttendanceTime(tableName, studentId, '');
+            updateAttendanceStatus(tableName, studentId, '0');
+            
+            // Update the time input and status select in the modal
+            const timeInput = document.querySelector(`input[onchange*="${studentId}"]`);
+            const statusSelect = document.querySelector(`select[onchange*="${studentId}"]`);
+            if (timeInput) {
+                timeInput.value = '';
+            }
+            if (statusSelect) {
+                statusSelect.value = '0';
+            }
+        }
+
+        async function countt() {
+            updateAttendanceList();
+            return 0;
+        }
+
+        async function whats() {
+            let message = IDs.join('\n');
+            const url = `https://api.whatsapp.com/send?phone=${+201555115339}&text=${encodeURIComponent(message)}`;
+            window.open(url, "_blank");
+        }
+
+        async function excell() {
+            // Sample data
+            const data = [];
+            for (let x = 0; x < IDs.length; x++) {
+                data.push([`${IDs[x]}`, `${names[x]}`, `${nums[x]}`, `${parent[x]}`]);
+            }
+
+            // Convert data to a worksheet
+            const ws = XLSX.utils.aoa_to_sheet(data);
+
+            // Create a new workbook
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, `${currentdate}`);
+
+            // Generate and download the Excel file
+            let sectionDisplayName = selectedSection;
+            if (selectedSection === 'SEC3') {
+                sectionDisplayName = 'القسم_الثالث';
+            } else if (selectedSection === 'SEC33') {
+                sectionDisplayName = 'ادبي_الفا';
+            } else if (selectedSection === 'SEC33_2') {
+                sectionDisplayName = 'ادبي_الراعي';
+            }
+            XLSX.writeFile(wb, `سجل_حضور_${sectionDisplayName}_بتاريخ${currentdate}.xlsx`);
+        }
+
+        async function exportTableToExcel(tableName) {
+            try {
+                const result = db.exec(`SELECT * FROM ${tableName}`);
+                if (result.length > 0) {
+                    const data = result[0].values;
+                    
+                    // Prepare data for Excel
+                    const excelData = [
+                        ['الرقم', 'الاسم', 'اليوم', 'وقت الحضور', 'الحالة'] // Header
+                    ];
+                    
+                    data.forEach(row => {
+                        const timeStatus = row[3] && row[3] !== '' ? row[3] : '';
+                        const markStatus = row[4] === '1' ? 'حاضر' : 'غائب';
+                        excelData.push([
+                            row[0], // ID
+                            row[1], // Name
+                            row[2], // Day
+                            timeStatus, // Time
+                            markStatus // Mark (حاضر/غائب)
+                        ]);
+                    });
+
+                    // Create worksheet
+                    const ws = XLSX.utils.aoa_to_sheet(excelData);
+                    
+                    // Create workbook
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, tableName);
+
+                    // Generate and download the Excel file
+                    XLSX.writeFile(wb, `جدول_حضور_${tableName}.xlsx`);
+                    
+                    alert('تم تصدير الجدول بنجاح');
+                }
+            } catch (error) {
+                console.error('Error exporting table:', error);
+                alert('حدث خطأ في تصدير الجدول');
+            }
+        }
+
+        // Function to export students to Excel
+        async function exportStudentsToExcel(tableName) {
+            try {
+                const result = db.exec(`SELECT * FROM ${tableName}`);
+                if (result.length > 0) {
+                    const data = result[0].values;
+                    
+                    // Prepare data for Excel with correct field names
+                    const excelData = [
+                        ['الرقم', 'الاسم', 'العنوان', 'المدرسة', 'الموبايل', 'رقم ولي الأمر', 'النوع', 'الصف', 'الغياب', 'الحضور', 'أيام الحضور', 'الحالة'] // Header
+                    ];
+                    
+                    data.forEach(row => {
+                        const status = row[11] === '1' ? 'نشط' : 'غير نشط';
+                        excelData.push([
+                            row[0], // ID
+                            row[1], // Name
+                            row[2], // Address
+                            row[3], // School
+                            row[4], // Mobile_Number
+                            row[5], // Parent_Number
+                            row[6], // Gender
+                            row[7], // Grade
+                            row[8], // Absence
+                            row[9], // Attendence
+                            row[10], // Day (Schedule)
+                            status // Status
+                        ]);
+                    });
+
+                    // Create worksheet
+                    const ws = XLSX.utils.aoa_to_sheet(excelData);
+                    
+                    // Create workbook
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, tableName);
+
+                    // Generate and download the Excel file
+                    XLSX.writeFile(wb, `طلاب_${tableName}.xlsx`);
+                    
+                    alert('تم تصدير بيانات الطلاب بنجاح');
+                }
+            } catch (error) {
+                console.error('Error exporting students:', error);
+                alert('حدث خطأ في تصدير بيانات الطلاب');
+            }
+        }
+
+        // Search functionality for students
+        function filterStudents() {
+            const searchTerm = document.getElementById('studentSearch').value.toLowerCase();
+            const clearButton = document.querySelector('.clear-search');
+            const searchResults = document.getElementById('searchResults');
+            const tbody = document.getElementById('studentsTableBody');
+            const rows = tbody.querySelectorAll('.student-row');
+            
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const id = cells[0].textContent.toLowerCase();
+                const name = cells[1].textContent.toLowerCase();
+                const phone = cells[2].textContent.toLowerCase();
+                const parentPhone = cells[3].textContent.toLowerCase();
+                
+                const matches = id.includes(searchTerm) || 
+                               name.includes(searchTerm) || 
+                               phone.includes(searchTerm) || 
+                               parentPhone.includes(searchTerm);
+                
+                if (matches) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update search results text
+            if (searchTerm === '') {
+                searchResults.textContent = 'عرض جميع الطلاب';
+                clearButton.style.display = 'none';
+            } else {
+                searchResults.textContent = `تم العثور على ${visibleCount} طالب`;
+                clearButton.style.display = 'block';
+            }
+            
+            // Highlight search terms
+            if (searchTerm !== '') {
+                highlightSearchTerms(searchTerm);
+            } else {
+                removeHighlights();
+            }
+        }
+
+        function clearStudentSearch() {
+            document.getElementById('studentSearch').value = '';
+            filterStudents();
+        }
+
+        function highlightSearchTerms(searchTerm) {
+            const tbody = document.getElementById('studentsTableBody');
+            const rows = tbody.querySelectorAll('.student-row');
+            
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    const cells = row.querySelectorAll('td');
+                    cells.forEach(cell => {
+                        const text = cell.textContent;
+                        const highlightedText = text.replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<mark class="search-highlight">${match}</mark>`
+                        );
+                        if (cell.innerHTML !== highlightedText) {
+                            cell.innerHTML = highlightedText;
+                        }
+                    });
+                }
+            });
+        }
+
+        function removeHighlights() {
+            const highlights = document.querySelectorAll('.search-highlight');
+            highlights.forEach(highlight => {
+                const parent = highlight.parentNode;
+                parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
+                parent.normalize();
+            });
+        }
+
+        // Sorting functionality
+        function sortTable(columnIndex) {
+            const tbody = document.getElementById('studentsTableBody');
+            const rows = Array.from(tbody.querySelectorAll('.student-row'));
+            const headers = document.querySelectorAll('.students-table th.sortable');
+            
+            // Update sort direction
+            if (window.currentSortColumn === columnIndex) {
+                window.currentSortDirection = window.currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                window.currentSortColumn = columnIndex;
+                window.currentSortDirection = 'asc';
+            }
+            
+            // Update header icons
+            headers.forEach((header, index) => {
+                const icon = header.querySelector('i');
+                if (index === columnIndex) {
+                    icon.className = window.currentSortDirection === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+                } else {
+                    icon.className = 'fas fa-sort';
+                }
+            });
+            
+            // Sort rows
+            rows.sort((a, b) => {
+                const aValue = a.querySelectorAll('td')[columnIndex].textContent.trim();
+                const bValue = b.querySelectorAll('td')[columnIndex].textContent.trim();
+                
+                let comparison = 0;
+                
+                // Handle numeric sorting for ID column
+                if (columnIndex === 0) {
+                    comparison = parseInt(aValue) - parseInt(bValue);
+                } else {
+                    comparison = aValue.localeCompare(bValue, 'ar');
+                }
+                
+                return window.currentSortDirection === 'asc' ? comparison : -comparison;
+            });
+            
+            // Reorder rows in DOM
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Copy to clipboard functionality
+        async function copyStudentsToClipboard() {
+            try {
+                const tbody = document.getElementById('studentsTableBody');
+                const visibleRows = Array.from(tbody.querySelectorAll('.student-row'))
+                    .filter(row => row.style.display !== 'none');
+                
+                if (visibleRows.length === 0) {
+                    alert('لا توجد بيانات للنسخ');
+                    return;
+                }
+                
+                let clipboardText = 'الرقم\tالاسم\tرقم الهاتف\tرقم ولي الأمر\n';
+                
+                visibleRows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const rowData = Array.from(cells).map(cell => {
+                        // Remove HTML tags and get clean text
+                        return cell.textContent.trim();
+                    });
+                    clipboardText += rowData.join('\t') + '\n';
+                });
+                
+                await navigator.clipboard.writeText(clipboardText);
+                alert(`تم نسخ بيانات ${visibleRows.length} طالب إلى الحافظة`);
+                
+            } catch (error) {
+                console.error('Error copying to clipboard:', error);
+                alert('حدث خطأ في نسخ البيانات');
+            }
+        }
+
+        // Close students dialog function
+        function closeStudentsDialog() {
+            const dialog = document.querySelector('.students-dialog');
+            if (dialog) {
+                dialog.close();
+                dialog.remove();
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('table-modal')) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Export modified database to file
+        function exportModifiedDatabase() {
+            try {
+                // Export the database to a binary file
+                const data = db.export();
+                const blob = new Blob([data], { type: 'application/octet-stream' });
+                
+                // Create download link
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'data_modified.db';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('Database exported successfully');
+                
+                // Show instructions for GitHub Pages
+                showGitHubPagesInstructions();
+                
+            } catch (error) {
+                console.error('Error exporting database:', error);
+                alert('حدث خطأ في تصدير قاعدة البيانات');
+            }
+        }
+
+        // Show GitHub upload modal
+        function showGitHubUploadModal() {
+            const modal = document.createElement('div');
+            modal.className = 'table-modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h3>رفع قاعدة البيانات إلى GitHub</h3>
+                        <button class="close-btn" onclick="closeModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="githubRepo">اسم المستودع (مثال: username/repository)</label>
+                            <input type="text" id="githubRepo" placeholder="Abdelrhman-Ahmed1/Konoz" class="form-input" value="Abdelrhman-Ahmed1/Konoz">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="githubToken">GitHub Personal Access Token</label>
+                            <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="form-input" value="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">
+                            <small class="help-text">
+                                <a href="https://github.com/settings/tokens" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    إنشاء token جديد
+                                </a>
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="commitMessage">رسالة التحديث</label>
+                            <input type="text" id="commitMessage" placeholder="Update database with new attendance tables" class="form-input">
+                        </div>
+                        
+                        <div class="github-info">
+                            <h4>معلومات مهمة:</h4>
+                            <ul>
+                                <li>يجب أن يكون لديك صلاحيات الكتابة على المستودع</li>
+                                <li>يجب أن يحتوي Token على صلاحية <code>repo</code></li>
+                                <li>سيتم استبدال ملف <code>data.db</code> الموجود</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success" onclick="uploadToGitHub()">
+                            <i class="fab fa-github"></i>
+                            رفع الملف
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeModal()">
+                            <i class="fas fa-times"></i>
+                            إلغاء
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Quick upload to GitHub with pre-filled credentials
+        async function quickUploadToGitHub() {
+            console.log('quickUploadToGitHub function called');
+            
+            // Check if database is loaded
+            if (!db) {
+                alert('قاعدة البيانات غير محملة. يرجى الانتظار...');
+                return;
+            }
+            
+            // Show confirmation dialog
+            const confirmUpload = confirm('هل تريد رفع قاعدة البيانات إلى GitHub؟\n\nملاحظة: سيتم استبدال الملف الموجود في المستودع.');
+            if (!confirmUpload) {
+                return;
+            }
+            
+            const repo = "Abdelrhman-Ahmed1/Konoz";
+            const token = "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";
+            const commitMessage = `Update database with new attendance tables - ${new Date().toLocaleString('ar-EG')}`;
+            
+            console.log('Starting quick upload process...');
+            console.log('Repository:', repo);
+            console.log('Token available:', !!token);
+            console.log('Database loaded:', !!db);
+            
+            try {
+                // Show loading notification
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-spinner fa-spin"></i>
+                    جاري رفع قاعدة البيانات إلى GitHub...
+                `;
+                document.body.appendChild(notification);
+                
+                console.log('Starting upload process...');
+                console.log('Repository:', repo);
+                console.log('Token length:', token.length);
+                
+                // Export database to base64
+                const data = db.export();
+                const base64Data = btoa(String.fromCharCode(...new Uint8Array(data)));
+                console.log('Database exported, size:', data.length, 'bytes');
+                
+                // First, get the current file to get its SHA
+                console.log('Fetching current file info...');
+                const getFileResponse = await fetch(`https://api.github.com/repos/${repo}/contents/data.db`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'Konoz-Attendance-System'
+                    }
+                });
+                
+                console.log('Get file response status:', getFileResponse.status);
+                
+                let sha = null;
+                if (getFileResponse.ok) {
+                    const fileInfo = await getFileResponse.json();
+                    sha = fileInfo.sha;
+                    console.log('Current file SHA:', sha);
+                } else {
+                    const errorText = await getFileResponse.text();
+                    console.log('Get file error response:', errorText);
+                    if (getFileResponse.status === 404) {
+                        console.log('File not found, will create new file');
+                    } else {
+                        throw new Error(`Failed to get file info: ${getFileResponse.status} - ${errorText}`);
+                    }
+                }
+                
+                // Prepare upload payload
+                const uploadPayload = {
+                    message: commitMessage,
+                    content: base64Data,
+                    branch: 'main'
+                };
+                
+                if (sha) {
+                    uploadPayload.sha = sha;
+                }
+                
+                console.log('Uploading file...');
+                console.log('Upload payload:', {
+                    message: uploadPayload.message,
+                    content: uploadPayload.content.substring(0, 50) + '...',
+                    sha: uploadPayload.sha,
+                    branch: uploadPayload.branch
+                });
+                
+                // Upload the new file
+                const uploadResponse = await fetch(`https://api.github.com/repos/${repo}/contents/data.db`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'Konoz-Attendance-System'
+                    },
+                    body: JSON.stringify(uploadPayload)
+                });
+                
+                console.log('Upload response status:', uploadResponse.status);
+                
+                if (uploadResponse.ok) {
+                    const result = await uploadResponse.json();
+                    
+                    // Update notification to success
+                    notification.innerHTML = `
+                        <i class="fas fa-check-circle"></i>
+                        تم رفع قاعدة البيانات بنجاح! سيتم تحديث الموقع خلال دقائق قليلة.
+                    `;
+                    notification.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                    
+                    console.log('Upload successful:', result);
+                    
+                    // Remove notification after 5 seconds
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 5000);
+                    
+                } else {
+                    const errorText = await uploadResponse.text();
+                    console.log('Upload error response:', errorText);
+                    const error = JSON.parse(errorText);
+                    throw new Error(`GitHub API Error: ${error.message || errorText}`);
+                }
+                
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    
+                    // Update notification to error
+                    const notification = document.querySelector('.status-notification');
+                    if (notification) {
+                        notification.innerHTML = `
+                            <i class="fas fa-exclamation-triangle"></i>
+                            حدث خطأ في الرفع: ${error.message}
+                        `;
+                        notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                        
+                        // Remove notification after 8 seconds for errors
+                        setTimeout(() => {
+                            if (notification.parentNode) {
+                                notification.parentNode.removeChild(notification);
+                            }
+                        }, 8000);
+                    }
+                    
+                    // Show alternative upload method
+                    if (error.message.includes('401') || error.message.includes('403') || error.message.includes('token')) {
+                        setTimeout(() => {
+                            const useAlternative = confirm('يبدو أن هناك مشكلة في الصلاحيات. هل تريد استخدام الطريقة البديلة لرفع الملف؟');
+                            if (useAlternative) {
+                                exportModifiedDatabase();
+                            }
+                        }, 2000);
+                    }
+                }
+        }
+
+        // Upload database to GitHub
+        async function uploadToGitHub() {
+            const repo = document.getElementById('githubRepo').value.trim();
+            const token = document.getElementById('githubToken').value.trim();
+            const commitMessage = document.getElementById('commitMessage').value.trim() || 'Update database with new attendance tables';
+            
+            if (!repo || !token) {
+                alert('يرجى إدخال اسم المستودع و Token');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                const uploadBtn = document.querySelector('.btn-success');
+                const originalText = uploadBtn.innerHTML;
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الرفع...';
+                uploadBtn.disabled = true;
+                
+                // Export database to base64
+                const data = db.export();
+                const base64Data = btoa(String.fromCharCode(...new Uint8Array(data)));
+                
+                // First, get the current file to get its SHA
+                const getFileResponse = await fetch(`https://api.github.com/repos/${repo}/contents/data.db`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'Konoz-Attendance-System'
+                    }
+                });
+                
+                let sha = null;
+                if (getFileResponse.ok) {
+                    const fileInfo = await getFileResponse.json();
+                    sha = fileInfo.sha;
+                } else if (getFileResponse.status === 404) {
+                    console.log('File not found, will create new file');
+                } else {
+                    const errorText = await getFileResponse.text();
+                    throw new Error(`Failed to get file info: ${getFileResponse.status} - ${errorText}`);
+                }
+                
+                // Prepare upload payload
+                const uploadPayload = {
+                    message: commitMessage,
+                    content: base64Data,
+                    branch: 'main'
+                };
+                
+                if (sha) {
+                    uploadPayload.sha = sha;
+                }
+                
+                // Upload the new file
+                const uploadResponse = await fetch(`https://api.github.com/repos/${repo}/contents/data.db`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'Konoz-Attendance-System'
+                    },
+                    body: JSON.stringify(uploadPayload)
+                });
+                
+                if (uploadResponse.ok) {
+                    const result = await uploadResponse.json();
+                    alert('تم رفع قاعدة البيانات بنجاح! سيتم تحديث الموقع خلال دقائق قليلة.');
+                    console.log('Upload successful:', result);
+                    closeModal();
+                } else {
+                    const error = await uploadResponse.json();
+                    throw new Error(`GitHub API Error: ${error.message}`);
+                }
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert(`حدث خطأ في الرفع: ${error.message}`);
+            } finally {
+                // Reset button state
+                const uploadBtn = document.querySelector('.btn-success');
+                uploadBtn.innerHTML = originalText;
+                uploadBtn.disabled = false;
+            }
+        }
+
+        // Simple test function to check if buttons work
+        function testButtonClick() {
+            console.log('Button test function called');
+            alert('زر الاختبار يعمل!');
+        }
+
+        // Test database functionality
+        function testDatabaseFunctionality() {
+            try {
+                if (!db) {
+                    alert('قاعدة البيانات غير محملة');
+                    return;
+                }
+                
+                const tableName = getDatabaseTableName();
+                const result = db.exec(`SELECT COUNT(*) as count FROM ${tableName}`);
+                const studentCount = result[0].values[0][0];
+                
+                // Test creating a simple table
+                const testTableName = 'test_table_' + Date.now();
+                db.exec(`CREATE TABLE ${testTableName} (id INTEGER, name TEXT)`);
+                db.exec(`INSERT INTO ${testTableName} (id, name) VALUES (1, 'test')`);
+                
+                // Test reading from test table
+                const testResult = db.exec(`SELECT * FROM ${testTableName}`);
+                
+                // Clean up test table
+                db.exec(`DROP TABLE ${testTableName}`);
+                
+                alert(`اختبار قاعدة البيانات ناجح!\nعدد الطلاب في ${tableName}: ${studentCount}\nتم إنشاء وحذف جدول تجريبي بنجاح`);
+                
+            } catch (error) {
+                console.error('Database test error:', error);
+                alert(`خطأ في اختبار قاعدة البيانات: ${error.message}`);
+            }
+        }
+
+        // Test GitHub API connection
+        async function testGitHubConnection() {
+            const repo = "Abdelrhman-Ahmed1/Konoz";
+            const token = "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";
+            
+            try {
+                // Show loading notification
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-spinner fa-spin"></i>
+                    جاري اختبار الاتصال بـ GitHub...
+                `;
+                document.body.appendChild(notification);
+                
+                console.log('Testing GitHub API connection...');
+                
+                // Test basic API access
+                const testResponse = await fetch(`https://api.github.com/repos/${repo}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'Konoz-Attendance-System'
+                    }
+                });
+                
+                console.log('Test response status:', testResponse.status);
+                
+                if (testResponse.ok) {
+                    const repoInfo = await testResponse.json();
+                    console.log('Repository info:', repoInfo);
+                    
+                    // Test file access
+                    const fileResponse = await fetch(`https://api.github.com/repos/${repo}/contents/data.db`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'User-Agent': 'Konoz-Attendance-System'
+                        }
+                    });
+                    
+                    console.log('File access status:', fileResponse.status);
+                    
+                    if (fileResponse.ok) {
+                        notification.innerHTML = `
+                            <i class="fas fa-check-circle"></i>
+                            الاتصال يعمل بشكل صحيح! يمكن الوصول للمستودع والملف.
+                        `;
+                        notification.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                    } else {
+                        notification.innerHTML = `
+                            <i class="fas fa-exclamation-triangle"></i>
+                            الاتصال يعمل ولكن لا يمكن الوصول لملف data.db
+                        `;
+                        notification.style.background = 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)';
+                    }
+                } else {
+                    const errorText = await testResponse.text();
+                    console.log('Test error response:', errorText);
+                    
+                    notification.innerHTML = `
+                        <i class="fas fa-exclamation-triangle"></i>
+                        فشل الاتصال: ${testResponse.status} - ${errorText}
+                    `;
+                    notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                }
+                
+                // Remove notification after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 5000);
+                
+            } catch (error) {
+                console.error('Test error:', error);
+                
+                const notification = document.querySelector('.status-notification');
+                if (notification) {
+                    notification.innerHTML = `
+                        <i class="fas fa-exclamation-triangle"></i>
+                        خطأ في الاتصال: ${error.message}
+                    `;
+                    notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                    
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 5000);
+                }
+            }
+        }
+
+        // Show instructions for updating GitHub Pages
+        function showGitHubPagesInstructions() {
+            const instructions = `
+                <div class="github-instructions">
+                    <h3>تعليمات تحديث قاعدة البيانات على GitHub Pages:</h3>
+                    <ol>
+                        <li>قم بتحميل ملف <strong>data_modified.db</strong></li>
+                        <li>اذهب إلى مستودع GitHub الخاص بك</li>
+                        <li>ابحث عن ملف <strong>data.db</strong></li>
+                        <li>اضغط على أيقونة القلم (Edit)</li>
+                        <li>احذف الملف القديم</li>
+                        <li>اسحب وأفلت الملف الجديد <strong>data_modified.db</strong></li>
+                        <li>أعد تسميته إلى <strong>data.db</strong></li>
+                        <li>اكتب رسالة commit مثل: "Update database with new attendance tables"</li>
+                        <li>اضغط "Commit changes"</li>
+                    </ol>
+                    <p><strong>ملاحظة:</strong> سيتم تحديث الموقع تلقائياً خلال دقائق قليلة.</p>
+                </div>
+            `;
+            
+            // Create modal for instructions
+            const modal = document.createElement('div');
+            modal.className = 'table-modal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <h3>تحديث قاعدة البيانات على GitHub Pages</h3>
+                        <button class="close-btn" onclick="closeModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ${instructions}
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="closeModal()">
+                            <i class="fas fa-times"></i>
+                            إغلاق
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Function to save table changes to database
+        function saveTableToDatabase(tableName, tableData) {
+            try {
+                // Update the database with new table data
+                db.exec(`DROP TABLE IF EXISTS ${tableName}`);
+                
+                // Create table
+                db.exec(`CREATE TABLE ${tableName} (
+                    id INTEGER PRIMARY KEY,
+                    name TEXT,
+                    day TEXT,
+                    mark TEXT
+                )`);
+                
+                // Insert data
+                tableData.forEach(row => {
+                    db.exec(`INSERT INTO ${tableName} (id, name, day, mark) 
+                            VALUES (${row.id}, '${row.name}', '${row.day}', '${row.mark}')`);
+                });
+                
+                console.log(`Table ${tableName} saved to database`);
+                return true;
+            } catch (error) {
+                console.error('Error saving table to database:', error);
+                return false;
+            }
+        }
+
+        // Function to save current attendance data to database
+        function saveCurrentAttendanceToDatabase() {
+            try {
+                if (!db) {
+                    console.error('Database not loaded');
+                    return false;
+                }
+                
+                // Create a table name based on current date and section
+                const today = new Date();
+                const day = today.getDate().toString().padStart(2, '0');
+                const month = (today.getMonth() + 1).toString().padStart(2, '0');
+                const year = today.getFullYear();
+                const dateString = `_${day}_${month}_${year}`;
+                
+                let tableName;
+                if (selectedSection === 'SEC3') {
+                    tableName = dateString;
+                } else if (selectedSection === 'SEC33') {
+                    tableName = `${dateString}_A`;
+                } else if (selectedSection === 'SEC33_2') {
+                    tableName = `${dateString}_R`;
+                } else {
+                    tableName = `${dateString}_${selectedSection}`;
+                }
+                
+                // Check if table already exists
+                const existingTable = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`);
+                if (existingTable.length > 0) {
+                    console.log(`Table ${tableName} already exists, updating...`);
+                    db.exec(`DROP TABLE ${tableName}`);
+                }
+                
+                // Create table
+                db.exec(`CREATE TABLE ${tableName} (
+                    id INTEGER PRIMARY KEY,
+                    name TEXT,
+                    day TEXT,
+                    homework TEXT,
+                    mark TEXT,
+
+                )`);
+                
+                // Insert current attendance data
+                for (let i = 0; i < IDs.length; i++) {
+                    db.exec(`INSERT INTO ${tableName} (id, name, day, homework, mark) 
+                            VALUES (${IDs[i]}, '${names[i]}', '${dateString}', '', '0')`);
+                }
+                
+                console.log(`Current attendance saved to table ${tableName}`);
+                
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    تم حفظ بيانات الحضور في قاعدة البيانات
+                `;
+                notification.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+                
+                return true;
+            } catch (error) {
+                console.error('Error saving current attendance to database:', error);
+                
+                // Show error notification
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    خطأ في حفظ بيانات الحضور: ${error.message}
+                `;
+                notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 5000);
+                
+                return false;
+            }
+        }
+
+        // Function to reload database from GitHub
+        async function reloadDatabase() {
+            try {
+                console.log('Reloading database from GitHub...');
+                
+                // Show loading notification
+                const notification = document.createElement('div');
+                notification.className = 'status-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-spinner fa-spin"></i>
+                    جاري إعادة تحميل قاعدة البيانات...
+                `;
+                notification.style.background = 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)';
+                document.body.appendChild(notification);
+                
+                // Reload the database
+                await loadDatabase();
+                
+                // Update notification to success
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    تم إعادة تحميل قاعدة البيانات بنجاح
+                `;
+                notification.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error reloading database:', error);
+                
+                // Update notification to error
+                const notification = document.querySelector('.status-notification');
+                if (notification) {
+                    notification.innerHTML = `
+                        <i class="fas fa-exclamation-triangle"></i>
+                        خطأ في إعادة تحميل قاعدة البيانات: ${error.message}
+                    `;
+                    notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                    
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 5000);
+                }
+            }
+        }
+
+        // Initialize on page load
+        window.onload = () => {
+            document.getElementById("count").textContent = "0";
+            loadDatabase();
+            
+            // Set default date
+            const today = new Date();
+            const dateString = today.toISOString().split('T')[0];
+            document.getElementById('tableDate').value = dateString;
+            
+            // Add event listeners for GitHub buttons
+            setTimeout(() => {
+                const quickUploadBtn = document.getElementById('quickUploadBtn');
+                const testConnectionBtn = document.getElementById('testConnectionBtn');
+                const testBtn = document.getElementById('testBtn');
+                
+                if (quickUploadBtn) {
+                    quickUploadBtn.addEventListener('click', function(e) {
+                        console.log('Quick upload button clicked');
+                        e.preventDefault();
+                        quickUploadToGitHub();
+                    });
+                    console.log('Quick upload button event listener added');
+                } else {
+                    console.error('Quick upload button not found');
+                }
+                
+                if (testConnectionBtn) {
+                    testConnectionBtn.addEventListener('click', function(e) {
+                        console.log('Test connection button clicked');
+                        e.preventDefault();
+                        testGitHubConnection();
+                    });
+                    console.log('Test connection button event listener added');
+                } else {
+                    console.error('Test connection button not found');
+                }
+                
+                if (testBtn) {
+                    testBtn.addEventListener('click', function(e) {
+                        console.log('Test button clicked');
+                        e.preventDefault();
+                        testButtonClick();
+                    });
+                    console.log('Test button event listener added');
+                } else {
+                    console.error('Test button not found');
+                }
+                
+                console.log('All GitHub button event listeners added');
+            }, 1000);
+        };
+
+        // Add keyboard event listener for Enter key
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('studentInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    getData();
+                }
+            });
+        });
+
+        // Function to show all students with edit/add functionality
+        async function showAllStudents() {
+            try {
+                const tableName = getDatabaseTableName();
+                const result = db.exec(`SELECT * FROM ${tableName}`);
+                
+                if (result.length > 0) {
+                    const data = result[0].values;
+                    
+                    // Create modal container
+                    const modal = document.createElement('div');
+                    modal.className = 'table-modal';
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>إدارة بيانات الطلاب - ${getSectionDisplayName()}</h3>
+                                <button class="close-btn" onclick="closeStudentsDialog()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="student-management-section">
+                                    <h4>إضافة/تعديل طالب</h4>
+                                    <form id="studentForm" class="student-form">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="studentId">الرقم التعريفي:</label>
+                                                <input type="number" id="studentId" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="studentName">الاسم:</label>
+                                                <input type="text" id="studentName" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="studentAddress">العنوان:</label>
+                                                <input type="text" id="studentAddress" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="studentSchool">المدرسة:</label>
+                                                <input type="text" id="studentSchool" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="studentMobile">رقم الموبايل:</label>
+                                                <input type="tel" id="studentMobile" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="studentParent">رقم ولي الأمر:</label>
+                                                <input type="tel" id="studentParent" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="studentGender">النوع:</label>
+                                                <select id="studentGender" required>
+                                                    <option value="">اختر النوع</option>
+                                                    <option value="ذكر">ذكر</option>
+                                                    <option value="أنثى">أنثى</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="studentGrade">الصف:</label>
+                                                <input type="text" id="studentGrade" value="${getSectionDisplayName()}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="studentAbsence">الغياب:</label>
+                                                <input type="number" id="studentAbsence" value="0" min="0">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="studentAttendance">الحضور:</label>
+                                                <input type="number" id="studentAttendance" value="0" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="studentDay">أيام الحضور:</label>
+                                                <select id="studentDay" required>
+                                                    <option value="">اختر أيام الحضور</option>
+                                                    <option value="السبت والثلاثاء">السبت والثلاثاء</option>
+                                                    <option value="الاحد والاربعاء">الاحد والاربعاء</option>
+                                                    <option value="الاثنين والخميس">الاثنين والخميس</option>
+                                                    <option value="السبت والاربعاء">السبت والاربعاء</option>
+                                                    <option value="السبت والخميس">السبت والخميس</option>
+                                                    <option value="الاحد والثلاثاء">الاحد والثلاثاء</option>
+                                                    <option value="الاحد والخميس">الاحد والخميس</option>
+                                                    <option value="الاثنين والثلاثاء">الاثنين والثلاثاء</option>
+                                                    <option value="الاثنين والاربعاء">الاثنين والاربعاء</option>
+                                                    <option value="ادبي الفا">ادبي الفا</option>
+                                                    <option value="ادبي الراعي">ادبي الراعي</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="studentStatus">الحالة:</label>
+                                                <select id="studentStatus" required>
+                                                    <option value="1">نشط</option>
+                                                    <option value="0">غير نشط</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="button" class="btn btn-primary" onclick="addOrUpdateStudent()">
+                                                <i class="fas fa-save"></i>
+                                                حفظ
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" onclick="clearStudentForm()">
+                                                <i class="fas fa-eraser"></i>
+                                                مسح
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="searchStudentById()">
+                                                <i class="fas fa-search"></i>
+                                                بحث
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <div class="table-container">
+                                    <h4>قائمة الطلاب</h4>
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>الاسم</th>
+                                                <th>رقم الموبايل</th>
+                                                <th>العنوان</th>
+                                                <th>المدرسة</th>
+                                                <th>رقم ولي الامر</th>
+                                                <th>النوع</th>
+                                                <th>الصف</th>
+                                                <th>الغياب</th>
+                                                <th>الحضور</th>
+                                                <th>الحالة</th>
+                                                <th>الإجراءات</th>
+                                            </tr>
+                                        </thead>    
+                                        <tbody>
+                                            ${data.map((row, index) => `
+                                                <tr>
+                                                    <td class="student-id-cell">${row[0]}</td>
+                                                    <td class="student-name-cell">${row[1]}</td>
+                                                    <td class="student-mobile-cell">${row[2]}</td>
+                                                    <td class="student-address-cell">${row[3]}</td>
+                                                    <td class="student-school-cell">${row[4]}</td>
+                                                    <td class="student-parent-cell">${row[5]}</td>
+                                                    <td class="student-gender-cell">${row[6]}</td>
+                                                    <td class="student-grade-cell">${row[7]}</td>
+                                                    <td class="student-absence-cell">${row[8]}</td>
+                                                    <td class="student-attendance-cell">
+                                                        ${row[9] === '1' ? '<i class="fas fa-check-circle"></i> حاضر' : '<i class="fas fa-times-circle"></i> غائب'}
+                                                    </td>
+                                                    <td class="student-status-cell">
+                                                        ${row[10] === '1' ? 'نشط' : 'غير نشط'}
+                                                    </td>
+                                                    <td class="actions-cell">
+                                                        <button class="btn btn-sm btn-primary" onclick="editStudent(${row[0]})">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-danger" onclick="deleteStudent(${row[0]})">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `).join('')
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>    </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-success" onclick="exportStudentsToExcel('${tableName}')">
+                                    <i class="fas fa-file-excel"></i>
+                                    تصدير Excel
+                                </button>
+                                <button class="btn btn-secondary" onclick="closeStudentsDialog()">
+                                    <i class="fas fa-times"></i>
+                                    إغلاق
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(modal);
+                    
+                } else {
+                    alert('لا يوجد طلاب في القسم المحدد');}
+                
+            } catch (error) {
+                console.error('Error showing students:', error);
+                alert('حدث خطأ في عرض الطلاب');
+            }
+        }
+
+        // Function to add or update student with complete database schema
+        async function addOrUpdateStudent() {
+                const studentMobile = document.getElementById('studentMobile').value;
+                const studentParent = document.getElementById('studentParent').value;
+                const studentGender = document.getElementById('studentGender').value;
+                const studentGrade = document.getElementById('studentGrade').value;
+                const studentAbsence = document.getElementById('studentAbsence').value || '0';
+                const studentAttendance = document.getElementById('studentAttendance').value || '0';
+                const studentDay = document.getElementById('studentDay').value;
+                const studentStatus = document.getElementById('studentStatus').value;
+
+                // Validation
+                if (!studentId || !studentName || !studentAddress || !studentSchool || 
+                    !studentMobile || !studentParent || !studentGender) {
+                    alert('يرجى ملء جميع الحقول المطلوبة');
+                    return;
+                }
+
+                const tableName = getDatabaseTableName();
+                
+                // Check if student exists
+                const existingStudent = db.exec(`SELECT ID FROM ${tableName} WHERE ID = ${studentId}`);
+                
+                if (existingStudent.length > 0) {
+                    // Update existing student
+                    const updateSQL = `
+                        UPDATE ${tableName} 
+                        SET Name = '${studentName}', 
+                            Address = '${studentAddress}', 
+                            School = '${studentSchool}', 
+                            Mobile_Number = '${studentMobile}', 
+                            Parent_Number = '${studentParent}', 
+                            Gender = '${studentGender}', 
+                            Grade = '${studentGrade}', 
+                            Absence = ${studentAbsence}, 
+                            Attendence = ${studentAttendance}, 
+                            Day = '${studentDay}', 
+                            Status = '${studentStatus}'
+                        WHERE ID = ${studentId}
+                    `;
+                    
+                    db.exec(updateSQL);
+                    alert('تم تحديث بيانات الطالب بنجاح');
+                } else {
+                    // Add new student
+                    const insertSQL = `
+                        INSERT INTO ${tableName} 
+                        (ID, Name, Address, School, Mobile_Number, Parent_Number, Gender, Grade, Absence, Attendence, Day, Status) 
+                        VALUES 
+                        (${studentId}, '${studentName}', '${studentAddress}', '${studentSchool}', '${studentMobile}', '${studentParent}', '${studentGender}', '${studentGrade}', ${studentAbsence}, ${studentAttendance}, '${studentDay}', '${studentStatus}')
+                    `;
+                    
+                    db.exec(insertSQL);
+                    alert('تم إضافة الطالب بنجاح');
+                }
+
+                // Export the modified database
+                exportModifiedDatabase();
+                
+                // Refresh the student list
+                showAllStudents();
+                
+        } 
         
 
+        // Function to edit student data
+        async function editStudent(studentId) {
+            try {
+                const tableName = getDatabaseTableName();
+                const result = db.exec(`SELECT * FROM ${tableName} WHERE ID = ${studentId}`);
+                
+                if (result.length > 0) {
+                    const student = result[0].values[0];
+                    
+                    // Populate form fields with student data
+                    document.getElementById('studentId').value = student[0];
+                    document.getElementById('studentName').value = student[1];
+                    document.getElementById('studentAddress').value = student[2];
+                    document.getElementById('studentSchool').value = student[3];
+                    document.getElementById('studentMobile').value = student[4];
+                    document.getElementById('studentParent').value = student[5];
+                    document.getElementById('studentGender').value = student[6];
+                    document.getElementById('studentGrade').value = student[7];
+                    document.getElementById('studentAbsence').value = student[8];
+                    document.getElementById('studentAttendance').value = student[9];
+                    document.getElementById('studentDay').value = student[10];
+                    document.getElementById('studentStatus').value = student[11];
+                    
+                    // Scroll to form
+                    document.getElementById('studentForm').scrollIntoView({ behavior: 'smooth' });
+                    
+                } else {
+                    alert('لم يتم العثور على الطالب');
+                }
+            } catch (error) {
+                console.error('Error editing student:', error);
+                alert('حدث خطأ في تحميل بيانات الطالب');
+            }
+        }
 
+        // Function to delete student
+        function deleteStudent(studentId) {
+            if (confirm(`هل أنت متأكد من حذف الطالب رقم ${studentId}؟`)) {
+                try {
+                    const tableName = getDatabaseTableName();
+                    db.exec(`DELETE FROM ${tableName} WHERE ID = ${studentId}`);
+                    alert('تم حذف الطالب بنجاح');
+                    
+                    // Refresh the students list
+                    closeStudentsDialog();
+                    setTimeout(() => {
+                        showAllStudents();
+                    }, 100);
+                    
+                } catch (error) {
+                    console.error('Error deleting student:', error);
+                    alert('حدث خطأ في حذف الطالب');
+                }
+            }
+        }
 
+        // Function to search student by ID
+        async function searchStudentById() {
+            try {
+                const searchId = document.getElementById('studentId').value;
+                
+                if (!searchId) {
+                    alert('يرجى إدخال رقم الطالب للبحث');
+                    return;
+                }
+                
+                const tableName = getDatabaseTableName();
+                const result = db.exec(`SELECT * FROM ${tableName} WHERE ID = ${searchId}`);
+                
+                if (result.length > 0) {
+                    const student = result[0].values[0];
+                    
+                    // Populate form fields with student data
+                    document.getElementById('studentId').value = student[0];
+                    document.getElementById('studentName').value = student[1];
+                    document.getElementById('studentAddress').value = student[2];
+                    document.getElementById('studentSchool').value = student[3];
+                    document.getElementById('studentMobile').value = student[4];
+                    document.getElementById('studentParent').value = student[5];
+                    document.getElementById('studentGender').value = student[6];
+                    document.getElementById('studentGrade').value = student[7];
+                    document.getElementById('studentAbsence').value = student[8];
+                    document.getElementById('studentAttendance').value = student[9];
+                    document.getElementById('studentDay').value = student[10];
+                    document.getElementById('studentStatus').value = student[11];
+                    
+                    alert('تم العثور على الطالب');
+                } else {
+                    alert('لم يتم العثور على طالب بهذا الرقم');
+                }
+            } catch (error) {
+                console.error('Error searching student:', error);
+                alert('حدث خطأ في البحث عن الطالب');
+            }
+        }
 
+        // Function to clear student form
+        function clearStudentForm() {
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentAddress').value = '';
+            document.getElementById('studentSchool').value = '';
+            document.getElementById('studentMobile').value = '';
+            document.getElementById('studentParent').value = '';
+            document.getElementById('studentGender').value = '';
+            document.getElementById('studentGrade').value = getSectionDisplayName();
+            document.getElementById('studentAbsence').value = '0';
+            document.getElementById('studentAttendance').value = '0';
+            
+            // Set default schedule based on section
+            let defaultSchedule = 'السبت والثلاثاء';
+            if (selectedSection === 'SEC33') {
+                defaultSchedule = 'ادبي الفا';
+            } else if (selectedSection === 'SEC33_2') {
+                defaultSchedule = 'ادبي الراعي';
+            }
+            document.getElementById('studentDay').value = defaultSchedule;
+            
+            document.getElementById('studentStatus').value = '1';
+        }
 
+        // Modal functions
+        function closeModal() {
+            const modal = document.querySelector('.table-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
 
-    </body>
-    </html>
+        // Close students dialog function
+        function closeStudentsDialog() {
+            const dialog = document.querySelector('.students-dialog');
+            if (dialog) {
+                dialog.close();
+                dialog.remove();
+            }
+        }
+
+        // Function to list all tables in database (for debugging)
+        function listAllTables() {
+            try {
+                const result = db.exec(`SELECT name FROM sqlite_master WHERE type='table'`);
+                console.log('All tables in database:', result);
+                if (result.length > 0) {
+                    const tables = result[0].values.map(row => row[0]);
+                    console.log('Table names:', tables);
+                    return tables;
+                }
+                return [];
+            } catch (error) {
+                console.error('Error listing tables:', error);
+                return [];
+            }
+        }
+
+        // Test function to verify attendance table functionality
+        function testAttendanceTable() {
+            try {
+                console.log('=== Testing Attendance Table Functionality ===');
+                console.log('Selected section:', selectedSection);
+                console.log('Database table name:', getDatabaseTableName());
+                
+                // List all tables
+                const tables = listAllTables();
+                console.log('Available tables:', tables);
+                
+                // Test creating a sample attendance table
+                const testDate = '2024-12-15';
+                const testTableName = '_15_12_2024';
+                
+                console.log('Testing with date:', testDate);
+                console.log('Test table name:', testTableName);
+                
+                // Check if test table exists
+                const tableExists = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${testTableName}'`);
+                console.log('Test table exists:', tableExists.length > 0);
+                
+                if (tableExists.length === 0) {
+                    console.log('Creating test attendance table...');
+                    createAttendanceTableForDate(testDate, testTableName);
+                }
+                
+                // Try to view the table
+                console.log('Attempting to view test table...');
+                viewAttendanceTable(testTableName, testDate);
+                
+            } catch (error) {
+                console.error('Error in test function:', error);
+            }
+        }
+
+        // Helper function to get section display name
+        function getSectionDisplayName() {
+            switch(selectedSection) {
+                case 'SEC1':
+                    return 'أولى ثانوي';
+                case 'SEC2':
+                    return 'ثانية ثانوي';
+                case 'SEC3':
+                    return 'تالتة ثانوي';
+                case 'SEC33':
+                    return 'ادبي الفا';
+                case 'SEC33_2':
+                    return 'ادبي الراعي';
+                default:
+                    return selectedSection;
+            }
+        }
+    </script>
+</body>
+</html>
