@@ -380,7 +380,7 @@
             }
         }
         if (daynum == 5) { //"الحمعة"
-            today.setDate(today.getDate() - 1);
+            today.setDate(today.getDate() - 7);
             let year = today.getFullYear();
             let month = today.getMonth() + 1;
             let day = today.getDate();
@@ -390,33 +390,13 @@
                 firstDate = `_${day}_0${month}_${year}`;
             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                secondDate = `_0${day}_0${month}_${year}`;
-            } else {
-                secondDate = `_${day}_0${month}_${year}`;
-            }
-
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                thirdDate = `_0${day}_0${month}_${year}`;
-            } else {
-                thirdDate = `_${day}_0${month}_${year}`;
-            }
-        }
 
         today = new Date();
         let year = today.getFullYear();
         let month = today.getMonth() + 1;
         let day = today.getDate();
         let currentdate = `_${day}_0${month}_${year}`;
-        console.log(firstDate, secondDate, thirdDate, currentdate);
+        console.log(firstDate);
 
         // Section selection function
         function selectSection(section) {
