@@ -532,7 +532,7 @@
                         let result = db.exec(`SELECT ID FROM ${firstDate} where ID = ${id};`);
                         day1 = result.length > 0;
                     } catch {
-                        day1 = true;
+                        day1 = false;
                     }
                     try {
                         let result = db.exec(`SELECT ID FROM ${secondDate} where ID = ${id};`);
@@ -546,7 +546,7 @@
                     } catch {
                         day3 = false;
                     }
-                    if (day1 == true) {
+                    if (day1 == false) {
                         absence = "محضرش اخر حصة";
                     }
                 } catch {
@@ -570,10 +570,12 @@
                     fstnum = arr[2];
                     secnum = arr[3].split(']').join('');
                     try {
+                        console.log(firstDate,id);
                         let result = db.exec(`SELECT ID FROM ${firstDate} where ID = ${id};`);
                         day1 = result.length > 0;
+                        
                     } catch {
-                        day1 = true;
+                        day1 = false;
                     }
                     try {
                         let result = db.exec(`SELECT ID FROM ${secondDate} where ID = ${id};`);
@@ -587,7 +589,7 @@
                     } catch {
                         day3 = false;
                     }
-                    if (day1 == true) {
+                    if (day1 == false) {
                         absence = "محضرش اخر حصة";
                     }
                 } catch {
