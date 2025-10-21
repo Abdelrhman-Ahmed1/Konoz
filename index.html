@@ -185,213 +185,213 @@
         let daynum = today.getDay();
         console.log(daynum);
 
-        var firstDate = '_10_010_2025_A';
-        let secondDate = "";
-        let thirdDate = "";
-<!--
-        // Date calculation logic (keeping existing logic)
-        if (daynum == 6) { //'السبت'
-            today.setDate(today.getDate() - 2);
-            let year = today.getFullYear();
-            let month = today.getMonth() + 1;
-            let day = today.getDate();
-            if (day < 10) {
-                firstDate = `_0${day}_0${month}_${year}`;
-            } else {
-                firstDate = `_${day}_0${month}_${year}`;
-            }
+        var firstDate = '_18_10_2025';
+        let secondDate = '_19_10_2025';
+        let thirdDate = '_20_10_2025';
+// <!--
+//         // Date calculation logic (keeping existing logic)
+//         if (daynum == 6) { //'السبت'
+//             today.setDate(today.getDate() - 2);
+//             let year = today.getFullYear();
+//             let month = today.getMonth() + 1;
+//             let day = today.getDate();
+//             if (day < 10) {
+//                 firstDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 firstDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                secondDate = `_0${day}_0${month}_${year}`;
-            } else {
-                secondDate = `_${day}_0${month}_${year}`;
-            }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 secondDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 secondDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                thirdDate = `_0${day}_0${month}_${year}`;
-            } else {
-                thirdDate = `_${day}_0${month}_${year}`;
-            }
-        }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 thirdDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 thirdDate = `_${day}_0${month}_${year}`;
+//             }
+//         }
 
-        if (daynum == 0) { //الاحد
-            today.setDate(today.getDate() - 3);
-            let year = today.getFullYear();
-            let month = today.getMonth() + 1;
-            let day = today.getDate();
-            if (day < 10) {
-                firstDate = `_0${day}_0${month}_${year}`;
-            } else {
-                firstDate = `_${day}_0${month}_${year}`;
-            }
+//         if (daynum == 0) { //الاحد
+//             today.setDate(today.getDate() - 3);
+//             let year = today.getFullYear();
+//             let month = today.getMonth() + 1;
+//             let day = today.getDate();
+//             if (day < 10) {
+//                 firstDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 firstDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                secondDate = `_0${day}_0${month}_${year}`;
-            } else {
-                secondDate = `_${day}_0${month}_${year}`;
-            }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 secondDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 secondDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                thirdDate = `_0${day}_0${month}_${year}`;
-            } else {
-                thirdDate = `_${day}_0${month}_${year}`;
-            }
-        }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 thirdDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 thirdDate = `_${day}_0${month}_${year}`;
+//             }
+//         }
 
-        if (daynum == 1) { //"الاتنين"
-            today.setDate(today.getDate() - 4);
-            let year = today.getFullYear();
-            let month = today.getMonth() + 1;
-            let day = today.getDate();
-            if (day < 10) {
-                firstDate = `_0${day}_0${month}_${year}`;
-            } else {
-                firstDate = `_${day}_0${month}_${year}`;
-            }
+//         if (daynum == 1) { //"الاتنين"
+//             today.setDate(today.getDate() - 4);
+//             let year = today.getFullYear();
+//             let month = today.getMonth() + 1;
+//             let day = today.getDate();
+//             if (day < 10) {
+//                 firstDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 firstDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                secondDate = `_0${day}_0${month}_${year}`;
-            } else {
-                secondDate = `_${day}_0${month}_${year}`;
-            }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 secondDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 secondDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                thirdDate = `_0${day}_0${month}_${year}`;
-            } else {
-                thirdDate = `_${day}_0${month}_${year}`;
-            }
-        }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 thirdDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 thirdDate = `_${day}_0${month}_${year}`;
+//             }
+//         }
 
-        if (daynum == 2) { //"التلات"
-            today.setDate(today.getDate() - 1);
-            let year = today.getFullYear();
-            let month = today.getMonth() + 1;
-            let day = today.getDate();
-            if (day < 10) {
-                firstDate = `_0${day}_0${month}_${year}`;
-            } else {
-                firstDate = `_${day}_0${month}_${year}`;
-            }
+//         if (daynum == 2) { //"التلات"
+//             today.setDate(today.getDate() - 1);
+//             let year = today.getFullYear();
+//             let month = today.getMonth() + 1;
+//             let day = today.getDate();
+//             if (day < 10) {
+//                 firstDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 firstDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                secondDate = `_0${day}_0${month}_${year}`;
-            } else {
-                secondDate = `_${day}_0${month}_${year}`;
-            }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 secondDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 secondDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                thirdDate = `_0${day}_0${month}_${year}`;
-            } else {
-                thirdDate = `_${day}_0${month}_${year}`;
-            }
-        }
-        if (daynum == 3) { //"الاربع"
-            today.setDate(today.getDate() - 2);
-            let year = today.getFullYear();
-            let month = today.getMonth() + 1;
-            let day = today.getDate();
-            if (day < 10) {
-                firstDate = `_0${day}_0${month}_${year}`;
-            } else {
-                firstDate = `_${day}_0${month}_${year}`;
-            }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 thirdDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 thirdDate = `_${day}_0${month}_${year}`;
+//             }
+//         }
+//         if (daynum == 3) { //"الاربع"
+//             today.setDate(today.getDate() - 2);
+//             let year = today.getFullYear();
+//             let month = today.getMonth() + 1;
+//             let day = today.getDate();
+//             if (day < 10) {
+//                 firstDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 firstDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                secondDate = `_0${day}_0${month}_${year}`;
-            } else {
-                secondDate = `_${day}_0${month}_${year}`;
-            }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 secondDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 secondDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                thirdDate = `_0${day}_0${month}_${year}`;
-            } else {
-                thirdDate = `_${day}_0${month}_${year}`;
-            }
-        }
-        if (daynum == 4) { //"الخميس"
-            today.setDate(today.getDate() - 3);
-            let year = today.getFullYear();
-            let month = today.getMonth() + 1;
-            let day = today.getDate();
-            if (day < 10) {
-                firstDate = `_0${day}_0${month}_${year}`;
-            } else {
-                firstDate = `_${day}_0${month}_${year}`;
-            }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 thirdDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 thirdDate = `_${day}_0${month}_${year}`;
+//             }
+//         }
+//         if (daynum == 4) { //"الخميس"
+//             today.setDate(today.getDate() - 3);
+//             let year = today.getFullYear();
+//             let month = today.getMonth() + 1;
+//             let day = today.getDate();
+//             if (day < 10) {
+//                 firstDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 firstDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                secondDate = `_0${day}_0${month}_${year}`;
-            } else {
-                secondDate = `_${day}_0${month}_${year}`;
-            }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 secondDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 secondDate = `_${day}_0${month}_${year}`;
+//             }
 
-            today.setDate(today.getDate() - 1);
-            year = today.getFullYear();
-            month = today.getMonth() + 1;
-            day = today.getDate();
-            if (day < 10) {
-                thirdDate = `_0${day}_0${month}_${year}`;
-            } else {
-                thirdDate = `_${day}_0${month}_${year}`;
-            }
-        }
-        if (daynum == 5) { //"الحمعة"
-            today.setDate(today.getDate() - 7);
-            let year = today.getFullYear();
-            let month = today.getMonth() + 1;
-            let day = today.getDate();
-            if (day < 10) {
-                firstDate = `_0${day}_0${month}_${year}`;
-            } else {
-                firstDate = `_${day}_0${month}_${year}`;
-            }
-        }
+//             today.setDate(today.getDate() - 1);
+//             year = today.getFullYear();
+//             month = today.getMonth() + 1;
+//             day = today.getDate();
+//             if (day < 10) {
+//                 thirdDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 thirdDate = `_${day}_0${month}_${year}`;
+//             }
+//         }
+//         if (daynum == 5) { //"الحمعة"
+//             today.setDate(today.getDate() - 7);
+//             let year = today.getFullYear();
+//             let month = today.getMonth() + 1;
+//             let day = today.getDate();
+//             if (day < 10) {
+//                 firstDate = `_0${day}_0${month}_${year}`;
+//             } else {
+//                 firstDate = `_${day}_0${month}_${year}`;
+//             }
+//         }
 
--->
+// -->
         today = new Date();
         let year = today.getFullYear();
         let month = today.getMonth() + 1;
@@ -548,7 +548,7 @@
                     } catch {
                         day3 = false;
                     }
-                    if (day1 == false) {
+                    if (day1 == false && day2 == false && day3 == false ) {
                         absence = "محضرش اخر حصة";
                     }
                 } catch {
@@ -591,7 +591,7 @@
                     } catch {
                         day3 = false;
                     }
-                    if (day1 == false) {
+                    if (day1 == false && day2 == false && day3 == false) {
                         absence = "محضرش اخر حصة";
                     }
                 } catch {
