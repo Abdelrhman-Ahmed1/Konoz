@@ -185,9 +185,9 @@
         let daynum = today.getDay();
         console.log(daynum);
 
-        var firstDate = '_17_01_2026';
-        let secondDate = '_18_01_2026';
-        let thirdDate = '_19_01_2026';
+        var firstDate = '_20_01_2026';
+        let secondDate = '_21_01_2026';
+        let thirdDate = '_22_01_2026';
 // <!--
 //         // Date calculation logic (keeping existing logic)
 //         if (daynum == 6) { //'السبت'
@@ -601,7 +601,7 @@
             }
 
             // Show confirmation dialog like in main.py
-            const confirmMessage = `${id}\n${name}\n${fstnum}\n${secnum}\n${absence || ''}`;
+            const confirmMessage = `${id}\n${name}\n${fstnum}\n${secnum}\n${absence || ''}\n${selectedSection}`;
             const confirm2 = confirm(confirmMessage);
             
             if (confirm2) {
